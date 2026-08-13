@@ -2,1218 +2,748 @@
 <html lang="id">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tarik Tambang Quiz</title>
-  <style>
-    * {
-      box-sizing: border-box
-    }
-
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: linear-gradient(180deg, #eaf7ff 0%, #fff 55%, #e9f7e4 100%);
-      color: #202020
-    }
-
-    button,
-    input {
-      font: inherit
-    }
-
-    .hidden {
-      display: none !important
-    }
-
-    .setup-wrap {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px
-    }
-
-    .setup-card {
-      width: min(520px, 100%);
-      background: #fff;
-      border-radius: 24px;
-      padding: 28px;
-      box-shadow: 0 12px 40px #0002;
-      text-align: center
-    }
-
-    .setup-card h1 {
-      margin: 0 0 8px;
-      font-size: 30px
-    }
-
-    .setup-card p {
-      color: #666;
-      line-height: 1.5
-    }
-
-    .setup-card input {
-      width: 100%;
-      padding: 15px;
-      border: 2px solid #d8d8d8;
-      border-radius: 13px;
-      outline: none;
-      margin: 10px 0
-    }
-
-    .setup-card input:focus {
-      border-color: #2563eb
-    }
-
-    .primary {
-      width: 100%;
-      border: 0;
-      border-radius: 13px;
-      padding: 15px;
-      background: #1f2937;
-      color: #fff;
-      font-weight: 800;
-      cursor: pointer
-    }
-
-    .error {
-      color: #c62828;
-      font-weight: bold;
-      margin-top: 12px;
-      line-height: 1.4
-    }
-
-    .note {
-      font-size: 13px;
-      text-align: left;
-      background: #f5f7fa;
-      padding: 12px;
-      border-radius: 12px;
-      margin-top: 14px
-    }
-
-    .game {
-      max-width: 1250px;
-      margin: auto;
-      padding: 14px 18px 35px
-    }
-
-    .header {
-      text-align: center
-    }
-
-    .header h1 {
-      font-size: 34px;
-      margin: 5px 0 2px
-    }
-
-    .header p {
-      margin: 0;
-      color: #666;
-      font-weight: bold
-    }
-
-    .arena {
-      position: relative;
-      height: 285px;
-      max-width: 900px;
-      margin: 4px auto 0;
-      overflow: hidden
-    }
-
-    .sky {
-      position: absolute;
-      inset: 0 0 65px;
-      background: linear-gradient(#bfe9ff, #f8fdff);
-      border-radius: 28px 28px 0 0
-    }
-
-    .cloud {
-      position: absolute;
-      background: #fff;
-      border-radius: 50px;
-      opacity: .8
-    }
-
-    .cloud:before,
-    .cloud:after {
-      content: "";
-      position: absolute;
-      background: #fff;
-      border-radius: 50%
-    }
-
-    .cloud {
-      width: 100px;
-      height: 28px
-    }
-
-    .cloud:before {
-      width: 48px;
-      height: 48px;
-      left: 16px;
-      top: -20px
-    }
-
-    .cloud:after {
-      width: 58px;
-      height: 58px;
-      right: 12px;
-      top: -28px
-    }
-
-    .c1 {
-      left: 7%;
-      top: 45px
-    }
-
-    .c2 {
-      right: 8%;
-      top: 75px;
-      transform: scale(.75)
-    }
-
-    .grass {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 76px;
-      background: linear-gradient(#72c45b, #54a948);
-      border-radius: 0 0 28px 28px
-    }
-
-    .center-line {
-      position: absolute;
-      bottom: 62px;
-      left: 50%;
-      height: 110px;
-      border-left: 3px dashed #fff8;
-      transform: translateX(-50%)
-    }
-
-    .rope-svg {
-      position: absolute;
-      left: 18%;
-      right: 18%;
-      top: 143px;
-      width: 64%;
-      height: 36px;
-      overflow: visible;
-      z-index: 3;
-      filter: drop-shadow(0 2px 1px #0004);
-    }
-
-    .rope-svg path {
-      fill: none;
-      stroke: #704214;
-      stroke-width: 16;
-      stroke-linecap: round;
-      transition: d .42s ease;
-    }
-
-    .rope-svg:after {
-      content: ""
-    }
-
-    .flag {
-      z-index: 6
-    }
-
-    .arm2 {
-      position: absolute;
-      width: 70px;
-      height: 13px;
-      background: #f4bb91;
-      border: 3px solid #252525;
-      border-radius: 12px;
-      top: 83px;
-      z-index: 5
-    }
-
-    .left .arm2 {
-      left: 101px;
-      transform: rotate(9deg)
-    }
-
-    .right .arm2 {
-      left: 2px;
-      transform: rotate(-9deg)
-    }
-
-    .hand2 {
-      position: absolute;
-      width: 19px;
-      height: 19px;
-      background: #f4bb91;
-      border: 3px solid #252525;
-      border-radius: 50%;
-      top: 80px;
-      z-index: 7
-    }
-
-    .left .hand2 {
-      left: 165px
-    }
-
-    .right .hand2 {
-      left: -4px
-    }
-
-    .hand,
-    .hand2 {
-      box-shadow: inset -2px -2px 0 #d79b78
-    }
-
-    .hand.grip,
-    .hand2.grip {
-      transform: scale(1.12);
-      box-shadow: inset -2px -2px 0 #c98565, 0 0 0 2px #704214
-    }
-
-    .flag {
-      position: absolute;
-      top: 130px;
-      left: 50%;
-      width: 26px;
-      height: 36px;
-      background: #ffd21c;
-      border: 3px solid #b08c00;
-      border-radius: 4px;
-      transform: translateX(-50%);
-      transition: .45s;
-      z-index: 5
-    }
-
-    .flag:before {
-      content: "";
-      position: absolute;
-      height: 47px;
-      border-left: 4px solid #7a5a23;
-      left: 8px;
-      top: 29px
-    }
-
-    .person {
-      position: absolute;
-      top: 76px;
-      width: 175px;
-      height: 145px;
-      transition: .45s;
-      z-index: 4
-    }
-
-    .person.left {
-      left: 7%
-    }
-
-    .person.right {
-      right: 7%
-    }
-
-    .body {
-      position: absolute;
-      width: 70px;
-      height: 72px;
-      border-radius: 22px 22px 12px 12px;
-      top: 49px;
-      border: 3px solid #252525
-    }
-
-    .left .body {
-      background: #1565e8;
-      left: 62px
-    }
-
-    .right .body {
-      background: #e53935;
-      left: 43px
-    }
-
-    .head {
-      position: absolute;
-      width: 57px;
-      height: 57px;
-      background: #f4bb91;
-      border: 3px solid #252525;
-      border-radius: 50%;
-      top: 8px;
-      z-index: 2
-    }
-
-    .left .head {
-      left: 75px
-    }
-
-    .right .head {
-      left: 50px
-    }
-
-    .hair {
-      position: absolute;
-      width: 55px;
-      height: 18px;
-      background: #292929;
-      border-radius: 14px 14px 5px 5px;
-      top: 7px;
-      z-index: 3
-    }
-
-    .left .hair {
-      left: 76px
-    }
-
-    .right .hair {
-      left: 51px
-    }
-
-    .arm {
-      position: absolute;
-      width: 78px;
-      height: 14px;
-      background: #f4bb91;
-      border: 3px solid #252525;
-      border-radius: 12px;
-      top: 69px;
-      z-index: 5
-    }
-
-    .left .arm {
-      left: 98px;
-      transform: rotate(-7deg)
-    }
-
-    .right .arm {
-      left: 4px;
-      transform: rotate(7deg)
-    }
-
-    .hand {
-      position: absolute;
-      width: 18px;
-      height: 18px;
-      background: #f4bb91;
-      border: 3px solid #252525;
-      border-radius: 50%;
-      top: 67px;
-      z-index: 6
-    }
-
-    .left .hand {
-      left: 167px
-    }
-
-    .right .hand {
-      left: -2px
-    }
-
-    .leg {
-      position: absolute;
-      width: 17px;
-      height: 55px;
-      background: #263238;
-      border: 3px solid #252525;
-      border-radius: 10px;
-      top: 112px
-    }
-
-    .left .leg1 {
-      left: 76px
-    }
-
-    .left .leg2 {
-      left: 111px
-    }
-
-    .right .leg1 {
-      left: 51px
-    }
-
-    .right .leg2 {
-      left: 86px
-    }
-
-    .shoe {
-      position: absolute;
-      width: 36px;
-      height: 15px;
-      background: #202020;
-      border-radius: 12px;
-      top: 157px
-    }
-
-    .left .shoe1 {
-      left: 64px
-    }
-
-    .left .shoe2 {
-      left: 103px
-    }
-
-    .right .shoe1 {
-      left: 39px
-    }
-
-    .right .shoe2 {
-      left: 78px
-    }
-
-    .left {
-      transform: scaleX(-1)
-    }
-
-    .right {
-      transform: scaleX(1)
-    }
-
-    .teams {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-      max-width: 1200px;
-      margin: auto
-    }
-
-    .panel {
-      background: #fff;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 4px 14px #0002;
-      border: 1px solid #ddd
-    }
-
-    .panel-head {
-      padding: 16px 15px;
-      color: #fff;
-      font-weight: 900;
-      font-size: 16px
-    }
-
-    .blue {
-      background: #073c99
-    }
-
-    .red {
-      background: #c5000b
-    }
-
-    .question {
-      padding: 16px 15px;
-      min-height: 74px;
-      font-weight: 800;
-      line-height: 1.4
-    }
-
-    .answers {
-      padding: 9px;
-      background: #f8f8f8
-    }
-
-    .answer {
-      display: block;
-      width: 100%;
-      min-height: 46px;
-      text-align: left;
-      border: 1px solid #ddd;
-      background: #fff;
-      padding: 12px 14px;
-      margin-bottom: 5px;
-      cursor: pointer;
-      border-radius: 3px;
-      transition: .15s
-    }
-
-    .answer:hover {
-      background: #f0f0f0
-    }
-
-    .answer.correct {
-      background: #43a047 !important;
-      color: #fff;
-      border-color: #2e7d32
-    }
-
-    .answer.wrong {
-      background: #e53935 !important;
-      color: #fff;
-      border-color: #c62828
-    }
-
-    .status {
-      text-align: center;
-      font-weight: 800;
-      min-height: 25px;
-      margin: 14px 0
-    }
-
-    .reset {
-      display: block;
-      margin: 0 auto;
-      border: 0;
-      background: #222;
-      color: #fff;
-      padding: 10px 18px;
-      border-radius: 9px;
-      cursor: pointer
-    }
-
-    @media(max-width:760px) {
-      .game {
-        padding: 10px
-      }
-
-      .teams {
-        grid-template-columns: 1fr;
-        gap: 12px
-      }
-
-      .arena {
-        height: 245px
-      }
-
-      .person {
-        transform: scale(.72)
-      }
-
-      .person.left {
-        left: -1%
-      }
-
-      .person.right {
-        right: -1%
-      }
-
-      .rope-svg {
-        left: 15%;
-        right: 15%
-      }
-
-      .header h1 {
-        font-size: 27px
-      }
-    }
-
-    .head .eye {
-      position: absolute;
-      width: 7px;
-      height: 9px;
-      background: #222;
-      border-radius: 50%;
-      top: 22px;
-      z-index: 5
-    }
-
-    .head .eye1 {
-      left: 14px
-    }
-
-    .head .eye2 {
-      right: 14px
-    }
-
-    .head .brow {
-      position: absolute;
-      width: 15px;
-      height: 4px;
-      background: #222;
-      border-radius: 5px;
-      top: 15px;
-      z-index: 5
-    }
-
-    .head .brow1 {
-      left: 9px;
-      transform: rotate(8deg)
-    }
-
-    .head .brow2 {
-      right: 9px;
-      transform: rotate(-8deg)
-    }
-
-    .head .mouth {
-      position: absolute;
-      width: 22px;
-      height: 10px;
-      border-bottom: 4px solid #7b2929;
-      border-radius: 0 0 18px 18px;
-      left: 50%;
-      transform: translateX(-50%);
-      top: 35px;
-      z-index: 5
-    }
-
-
-    .person.happy .mouth {
-      height: 13px;
-      border-bottom: 4px solid #7b2929;
-      border-top: 0;
-      border-radius: 0 0 20px 20px
-    }
-
-    .person.happy .brow1 {
-      transform: rotate(-12deg)
-    }
-
-    .person.happy .brow2 {
-      transform: rotate(12deg)
-    }
-
-    .person.angry .mouth {
-      height: 10px;
-      border-bottom: 0;
-      border-top: 4px solid #7b2929;
-      border-radius: 20px 20px 0 0;
-      top: 38px
-    }
-
-    .person.angry .brow1 {
-      transform: rotate(25deg)
-    }
-
-    .person.angry .brow2 {
-      transform: rotate(-25deg)
-    }
-
-    .person.tired .eye {
-      height: 4px;
-      top: 25px;
-      border-radius: 8px
-    }
-
-
-    /* ===== EFEK TARIK TAMBANG ===== */
-    .rope-svg {
-      transform-origin: center;
-    }
-
-    .person {
-      transform-origin: center bottom;
-    }
-
-    .person.pulling-left {
-      animation: pullLeft .42s ease-in-out;
-    }
-
-    .person.pulling-right {
-      animation: pullRight .42s ease-in-out;
-    }
-
-    .person.shake {
-      animation: shake .32s ease-in-out;
-    }
-
-    .rope-svg.pull-left {
-      animation: ropeLeft .42s ease-in-out;
-    }
-
-    .rope-svg.pull-right {
-      animation: ropeRight .42s ease-in-out;
-    }
-
-    .flag.pulse {
-      animation: flagPulse .42s ease-in-out;
-    }
-
-    .dust {
-      position: absolute;
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background: #d8c7a1;
-      bottom: 55px;
-      opacity: 0;
-      z-index: 3;
-    }
-
-    .dust.show {
-      animation: dust .48s ease-out
-    }
-
-    .dust.d1 {
-      left: 16%
-    }
-
-    .dust.d2 {
-      left: 22%
-    }
-
-    .dust.d3 {
-      right: 16%
-    }
-
-    .dust.d4 {
-      right: 22%
-    }
-
-    @keyframes pullLeft {
-      0% {
-        transform: scaleX(-1) rotate(0) translateX(0)
-      }
-
-      35% {
-        transform: scaleX(-1) rotate(-7deg) translateX(-12px)
-      }
-
-      65% {
-        transform: scaleX(-1) rotate(4deg) translateX(5px)
-      }
-
-      100% {
-        transform: scaleX(-1) rotate(0) translateX(0)
-      }
-    }
-
-    @keyframes pullRight {
-      0% {
-        transform: rotate(0) translateX(0)
-      }
-
-      35% {
-        transform: rotate(7deg) translateX(12px)
-      }
-
-      65% {
-        transform: rotate(-4deg) translateX(-5px)
-      }
-
-      100% {
-        transform: rotate(0) translateX(0)
-      }
-    }
-
-    @keyframes shake {
-
-      0%,
-      100% {
-        transform: translateX(0)
-      }
-
-      25% {
-        transform: translateX(-5px)
-      }
-
-      50% {
-        transform: translateX(5px)
-      }
-
-      75% {
-        transform: translateX(-3px)
-      }
-    }
-
-    @keyframes ropeLeft {
-      0% {
-        margin-left: 0
-      }
-
-      35% {
-        margin-left: -12px
-      }
-
-      65% {
-        margin-left: 4px
-      }
-
-      100% {
-        margin-left: 0
-      }
-    }
-
-    @keyframes ropeRight {
-      0% {
-        margin-left: 0
-      }
-
-      35% {
-        margin-left: 12px
-      }
-
-      65% {
-        margin-left: -4px
-      }
-
-      100% {
-        margin-left: 0
-      }
-    }
-
-    @keyframes flagPulse {
-
-      0%,
-      100% {
-        scale: 1
-      }
-
-      50% {
-        scale: 1.25
-      }
-    }
-
-    @keyframes dust {
-      0% {
-        opacity: .8;
-        transform: translate(0, 0) scale(.6)
-      }
-
-      100% {
-        opacity: 0;
-        transform: translate(0, -22px) scale(1.8)
-      }
-    }
-
-
-    .person .head {
-      transition: transform .25s ease
-    }
-
-    .person.happy .mouth {
-      height: 14px;
-      border-bottom: 5px solid #7b2929;
-      border-radius: 0 0 22px 22px;
-      top: 34px
-    }
-
-    .person.angry .mouth {
-      height: 9px;
-      border-top: 5px solid #7b2929;
-      border-bottom: 0;
-      border-radius: 22px 22px 0 0;
-      top: 38px
-    }
-
-    .person.happy .brow1 {
-      transform: rotate(-14deg)
-    }
-
-    .person.happy .brow2 {
-      transform: rotate(14deg)
-    }
-
-    .person.angry .brow1 {
-      transform: rotate(24deg)
-    }
-
-    .person.angry .brow2 {
-      transform: rotate(-24deg)
-    }
-
-    .person.tired .eye {
-      height: 4px;
-      top: 25px
-    }
-
-    .grip {
-      animation: grip .35s ease-in-out
-    }
-
-    @keyframes grip {
-
-      0%,
-      100% {
-        scale: 1
-      }
-
-      50% {
-        scale: 1.16
-      }
-    }
-
-    @keyframes ropeLeft {
-      0% {
-        filter: drop-shadow(0 2px 1px #0004);
-        transform: translateX(0) rotate(0)
-      }
-
-      35% {
-        transform: translateX(-8px) rotate(-1deg)
-      }
-
-      60% {
-        transform: translateX(3px) rotate(.7deg)
-      }
-
-      100% {
-        transform: translateX(0) rotate(0)
-      }
-    }
-
-    @keyframes ropeRight {
-      0% {
-        filter: drop-shadow(0 2px 1px #0004);
-        transform: translateX(0) rotate(0)
-      }
-
-      35% {
-        transform: translateX(8px) rotate(1deg)
-      }
-
-      60% {
-        transform: translateX(-3px) rotate(-.7deg)
-      }
-
-      100% {
-        transform: translateX(0) rotate(0)
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+    <title>Game Tarik Tambang Quiz</title>
+    <style>
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #72c8ef;
+            color: #10233b
+        }
+
+        button,
+        input {
+            font: inherit
+        }
+
+        .hide {
+            display: none !important
+        }
+
+        body:before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            background: linear-gradient(#55b9ef 0 48%, #82c95d 48% 100%)
+        }
+
+        body:after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            opacity: .12;
+            background-image: radial-gradient(#fff 1px, transparent 1px);
+            background-size: 18px 18px
+        }
+
+        .wrap {
+            max-width: 1450px;
+            margin: auto;
+            padding: 18px
+        }
+
+        .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 15px
+        }
+
+        .help,
+        .score {
+            background: #073766;
+            color: #fff;
+            padding: 12px 22px;
+            border-radius: 16px;
+            font-weight: 900;
+            box-shadow: 0 5px 0 #05284a
+        }
+
+        .help {
+            cursor: pointer
+        }
+
+        .score {
+            font-size: 20px
+        }
+
+        .title {
+            text-align: center;
+            font-weight: 1000;
+            line-height: .85;
+            font-size: clamp(35px, 5vw, 70px);
+            text-shadow: 4px 5px #08335b;
+            margin: 5px 0 0;
+            color: #fff
+        }
+
+        .title span {
+            display: block;
+            color: #ffd21b;
+            -webkit-text-stroke: 2px #172c3d
+        }
+
+        .ribbon {
+            display: inline-block;
+            background: #df2d1f;
+            color: #fff;
+            font-size: clamp(20px, 3vw, 38px);
+            padding: 8px 70px;
+            border-radius: 10px;
+            margin-top: 5px;
+            box-shadow: 0 6px #7b160f
+        }
+
+        .setup {
+            position: absolute;
+            left: 20px;
+            top: 82px;
+            background: #fff;
+            border: 3px solid #174b78;
+            border-radius: 18px;
+            padding: 15px;
+            width: min(500px, calc(100% - 40px));
+            box-shadow: 0 8px 18px #0003;
+            z-index: 10
+        }
+
+        .setup h2 {
+            margin: 0 0 8px;
+            text-align: center
+        }
+
+        .setup input {
+            width: 100%;
+            padding: 13px;
+            border: 2px solid #aaa;
+            border-radius: 10px
+        }
+
+        .start {
+            width: 100%;
+            margin-top: 9px;
+            padding: 13px;
+            border: 0;
+            border-radius: 10px;
+            background: #24a33a;
+            color: #fff;
+            font-weight: 900;
+            cursor: pointer
+        }
+
+        .err {
+            color: #c21d1d;
+            font-weight: bold;
+            margin-top: 8px
+        }
+
+        .tip {
+            font-size: 12px;
+            color: #555;
+            margin-top: 8px
+        }
+
+        .arena {
+            height: 400px;
+            position: relative;
+            margin-top: 12px;
+            overflow: hidden
+        }
+
+        .cloud {
+            position: absolute;
+            background: #fff;
+            width: 120px;
+            height: 35px;
+            border-radius: 40px;
+            opacity: .8
+        }
+
+        .cloud:before,
+        .cloud:after {
+            content: "";
+            position: absolute;
+            background: #fff;
+            border-radius: 50%
+        }
+
+        .cloud:before {
+            width: 55px;
+            height: 55px;
+            left: 15px;
+            top: -25px
+        }
+
+        .cloud:after {
+            width: 65px;
+            height: 65px;
+            right: 12px;
+            top: -32px
+        }
+
+        .c1 {
+            left: 8%;
+            top: 40px
+        }
+
+        .c2 {
+            right: 8%;
+            top: 80px
+        }
+
+        .ground {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 105px;
+            background: linear-gradient(#7acb52, #4a9f3e);
+            border-radius: 45% 45% 0 0/20% 20% 0 0
+        }
+
+        .tug {
+            position: absolute;
+            left: 4%;
+            right: 4%;
+            top: 115px;
+            height: 250px
+        }
+
+        .team {
+            position: absolute;
+            top: 0;
+            width: 46%;
+            height: 250px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end
+        }
+
+        .blueTeam {
+            left: 0
+        }
+
+        .redTeam {
+            right: 0;
+            flex-direction: row-reverse
+        }
+
+        .person {
+            width: 31%;
+            min-width: 125px;
+            position: relative;
+            transition: transform .55s cubic-bezier(.2, .8, .2, 1);
+            filter: drop-shadow(0 5px 2px #0003)
+        }
+
+        .person svg {
+            width: 100%;
+            height: auto;
+            display: block
+        }
+
+        .person .shirtB {
+            fill: #176ce0
+        }
+
+        .person .shirtR {
+            fill: #e3342f
+        }
+
+        .skin {
+            fill: #f3b18b
+        }
+
+        .hair {
+            fill: #151515
+        }
+
+        .pants {
+            fill: #222
+        }
+
+        .shoe {
+            fill: #17202b;
+            stroke: #111;
+            stroke-width: 3
+        }
+
+        .edge {
+            stroke: #18202a;
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round
+        }
+
+        .happy .mouth {
+            d: path("M0 2 Q10 13 20 2")
+        }
+
+        .angry .mouth {
+            d: path("M0 10 Q10 0 20 10")
+        }
+
+        .happy .b1 {
+            transform: rotate(-10deg)
+        }
+
+        .happy .b2 {
+            transform: rotate(10deg)
+        }
+
+        .angry .b1 {
+            transform: rotate(25deg)
+        }
+
+        .angry .b2 {
+            transform: rotate(-25deg)
+        }
+
+        .rope {
+            position: absolute;
+            left: 9%;
+            right: 9%;
+            top: 135px;
+            height: 85px;
+            z-index: 5;
+            pointer-events: none
+        }
+
+        .rope svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible
+        }
+
+        .ropeMain {
+            fill: none;
+            stroke: #76471e;
+            stroke-width: 12;
+            stroke-linecap: round
+        }
+
+        .ropeLight {
+            fill: none;
+            stroke: #b97b43;
+            stroke-width: 3;
+            stroke-dasharray: 10 8
+        }
+
+        .flag {
+            position: absolute;
+            left: 50%;
+            top: 118px;
+            width: 28px;
+            height: 52px;
+            background: #ffd21a;
+            border: 3px solid #9d7800;
+            border-radius: 4px;
+            z-index: 8;
+            transform: translateX(-50%);
+            transition: transform .55s
+        }
+
+        .flag:after {
+            content: "";
+            position: absolute;
+            left: 10px;
+            top: 47px;
+            height: 45px;
+            border-left: 4px solid #6e4a22
+        }
+
+        .dust {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #d9c89d;
+            opacity: 0;
+            z-index: 3
+        }
+
+        .dust.show {
+            animation: dust .65s ease-out
+        }
+
+        @keyframes dust {
+            0% {
+                opacity: .8;
+                transform: translate(0, 0) scale(.5)
+            }
+
+            100% {
+                opacity: 0;
+                transform: translate(0, -35px) scale(2)
+            }
+        }
+
+        .pullB {
+            animation: pullB .6s
+        }
+
+        .pullR {
+            animation: pullR .6s
+        }
+
+        .lose {
+            animation: lose .6s
+        }
+
+        .hands {
+            animation: hands .3s 2 alternate
+        }
+
+        .ropeTug {
+            animation: ropeTug .6s
+        }
+
+        @keyframes pullB {
+            35% {
+                transform: translate(-18px, 8px) rotate(-3deg)
+            }
+
+            65% {
+                transform: translate(5px, -2px)
+            }
+        }
+
+        @keyframes pullR {
+            35% {
+                transform: translate(18px, 8px) rotate(3deg)
+            }
+
+            65% {
+                transform: translate(-5px, -2px)
+            }
+        }
+
+        @keyframes lose {
+            35% {
+                transform: translate(0, 7px) rotate(2deg)
+            }
+
+            65% {
+                transform: translate(0, -2px)
+            }
+        }
+
+        @keyframes hands {
+            to {
+                transform: translate(8px, 3px)
+            }
+        }
+
+        @keyframes ropeTug {
+            35% {
+                transform: scaleY(1.08)
+            }
+
+            65% {
+                transform: scaleY(.96)
+            }
+        }
+
+        .questions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px
+        }
+
+        .panel {
+            background: #fff;
+            border-radius: 18px;
+            padding: 0 14px 14px;
+            box-shadow: 0 8px 18px #0003;
+            overflow: hidden
+        }
+
+        .panel h2 {
+            margin: 0 -14px 12px;
+            padding: 15px;
+            text-align: center;
+            color: #fff;
+            font-size: 25px
+        }
+
+        .blueH {
+            background: #0864dc
+        }
+
+        .redH {
+            background: #d92323
+        }
+
+        .q {
+            text-align: center;
+            font-weight: 900;
+            font-size: 19px;
+            min-height: 55px;
+            padding: 5px
+        }
+
+        .answers {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 9px
+        }
+
+        .ans {
+            border: 2px solid #d6d6d6;
+            background: #fff;
+            border-radius: 10px;
+            padding: 12px;
+            text-align: left;
+            cursor: pointer;
+            min-height: 52px;
+            font-weight: 700
+        }
+
+        .ans:hover {
+            background: #eef5ff
+        }
+
+        .correct {
+            background: #36a852 !important;
+            color: white;
+            border-color: #22813a
+        }
+
+        .wrong {
+            background: #e43b3b !important;
+            color: #fff;
+            border-color: #a31c1c
+        }
+
+        .status {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 900;
+            padding: 14px
+        }
+
+        .bottom {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px
+        }
+
+        .bottom button {
+            border: 0;
+            border-radius: 12px;
+            background: #073766;
+            color: #fff;
+            padding: 11px 18px;
+            font-weight: 900
+        }
+
+        @media(max-width:800px) {
+            .setup {
+                position: relative;
+                left: auto;
+                top: auto;
+                margin: 8px auto
+            }
+
+            .top {
+                align-items: center
+            }
+
+            .score {
+                font-size: 15px;
+                padding: 10px
+            }
+
+            .help {
+                padding: 10px
+            }
+
+            .arena {
+                height: 285px
+            }
+
+            .tug {
+                top: 85px
+            }
+
+            .rope {
+                top: 102px
+            }
+
+            .flag {
+                top: 87px
+            }
+
+            .team {
+                height: 190px
+            }
+
+            .person {
+                min-width: 85px
+            }
+
+            .questions {
+                grid-template-columns: 1fr
+            }
+
+            .answers {
+                grid-template-columns: 1fr 1fr
+            }
+
+            .title {
+                font-size: 38px
+            }
+
+            .ribbon {
+                padding: 6px 35px;
+                font-size: 22px
+            }
+        }
+
+        @media(max-width:480px) {
+            .arena {
+                height: 245px
+            }
+
+            .team {
+                height: 155px
+            }
+
+            .tug {
+                top: 70px
+            }
+
+            .rope {
+                top: 80px
+            }
+
+            .flag {
+                top: 65px
+            }
+
+            .person {
+                min-width: 68px
+            }
+
+            .questions {
+                gap: 12px
+            }
+
+            .answers {
+                grid-template-columns: 1fr
+            }
+
+            .panel h2 {
+                font-size: 20px
+            }
+        }
+    </style>
 </head>
 
 <body>
+    <div class="wrap">
+        <div class="top"><button class="help"
+                onclick="alert('Masukkan link Google Sheets. Kolom A=Pertanyaan, B=Jawaban Benar, C-E=Jawaban Salah. Setel akses Sheet menjadi Siapa saja yang memiliki link → Pelihat.')">❔
+                PETUNJUK</button>
+            <div class="score">🏆 Skor <span id="score">0 : 0</span></div>
+        </div>
+        <div class="title">GAME <span>TARIK TAMBANG</span>
+            <div class="ribbon">QUIZ</div>
+        </div>
 
-  <div id="setup" class="setup-wrap">
-    <div class="setup-card">
-      <div style="font-size:60px">🪢</div>
-      <h1>Game Tarik Tambang</h1>
-      <p>Masukkan link Google Sheets berisi soal. Setelah berhasil, halaman ini otomatis masuk ke permainan.</p>
-      <input id="sheetUrl" type="url" placeholder="Tempel link Google Sheets di sini">
-      <button class="primary" id="connectBtn" onclick="connectSheet()">📥 HUBUNGKAN SOAL</button>
-      <div id="error" class="error"></div>
-      <div class="note">
-        <b>Format Sheet:</b><br>
-        A = Pertanyaan<br>
-        B = Jawaban Benar<br>
-        C = Jawaban Salah 1<br>
-        D = Jawaban Salah 2<br>
-        E = Jawaban Salah 3<br><br>
-        <b>Penting:</b> Google Sheets → Bagikan → Akses umum → Siapa saja yang memiliki link → Pelihat.
-      </div>
-    </div>
-  </div>
+        <div id="setup" class="setup">
+            <h2>Masukkan Link Google Sheet</h2>
+            <input id="url" placeholder="https://docs.google.com/spreadsheets/d/...">
+            <button class="start" onclick="connect()">▣ MULAI GAME</button>
+            <div id="err" class="err"></div>
+            <div class="tip">A = Pertanyaan • B = Jawaban Benar • C = Salah 1 • D = Salah 2 • E = Salah 3<br>Pastikan
+                akses Google Sheet: <b>Siapa saja yang memiliki link → Pelihat</b>.</div>
+        </div>
 
-  <div id="game" class="game hidden">
-    <div class="header">
-      <h1>🪢 TARIK TAMBANG</h1>
-      <p>Jawab soal untuk menarik tali!</p>
-    </div>
+        <div id="game" class="hide">
+            <div class="arena">
+                <div class="cloud c1"></div>
+                <div class="cloud c2"></div>
+                <div class="ground"></div>
+                <div class="tug">
+                    <div class="team blueTeam" id="blueTeam"></div>
+                    <div class="team redTeam" id="redTeam"></div>
+                </div>
+                <div class="rope" id="ropeBox"><svg viewBox="0 0 1000 100" preserveAspectRatio="none">
+                        <path id="ropeShadow" class="ropeMain" d="M0 50 C250 50 750 50 1000 50" />
+                        <path id="rope" class="ropeMain" d="M0 50 C250 50 750 50 1000 50" />
+                        <path id="ropeLight" class="ropeLight" d="M0 47 C250 47 750 47 1000 47" />
+                    </svg></div>
+                <div id="flag" class="flag"></div>
+                <div class="dust" style="left:15%;bottom:55px"></div>
+                <div class="dust" style="left:24%;bottom:60px"></div>
+                <div class="dust" style="right:15%;bottom:55px"></div>
+                <div class="dust" style="right:24%;bottom:60px"></div>
+            </div>
 
-    <div class="arena">
-      <div class="sky"></div>
-      <div class="cloud c1"></div>
-      <div class="cloud c2"></div>
-      <div class="grass"></div>
-      <div class="dust d1"></div>
-      <div class="dust d2"></div>
-      <div class="dust d3"></div>
-      <div class="dust d4"></div>
-      <div class="center-line"></div>
-      <svg class="rope-svg" id="rope" viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true">
-        <path id="ropePath" d="M0,50 C250,50 750,50 1000,50"></path>
-      </svg>
-      <div class="flag" id="flag"></div>
-
-      <div class="person left" id="bluePerson">
-        <div class="head"><span class="eye eye1"></span><span class="eye eye2"></span><span
-            class="brow brow1"></span><span class="brow brow2"></span><span class="mouth"></span></div>
-        <div class="hair"></div>
-        <div class="body"></div>
-        <div class="arm"></div>
-        <div class="hand"></div>
-        <div class="arm2"></div>
-        <div class="hand2"></div>
-        <div class="leg leg1"></div>
-        <div class="leg leg2"></div>
-        <div class="shoe shoe1"></div>
-        <div class="shoe shoe2"></div>
-      </div>
-      <div class="person right" id="redPerson">
-        <div class="head"><span class="eye eye1"></span><span class="eye eye2"></span><span
-            class="brow brow1"></span><span class="brow brow2"></span><span class="mouth"></span></div>
-        <div class="hair"></div>
-        <div class="body"></div>
-        <div class="arm"></div>
-        <div class="hand"></div>
-        <div class="arm2"></div>
-        <div class="hand2"></div>
-        <div class="leg leg1"></div>
-        <div class="leg leg2"></div>
-        <div class="shoe shoe1"></div>
-        <div class="shoe shoe2"></div>
-      </div>
+            <div class="questions">
+                <div class="panel">
+                    <h2 class="blueH">TIM BIRU</h2>
+                    <div id="qB" class="q"></div>
+                    <div id="aB" class="answers"></div>
+                </div>
+                <div class="panel">
+                    <h2 class="redH">TIM MERAH</h2>
+                    <div id="qR" class="q"></div>
+                    <div id="aR" class="answers"></div>
+                </div>
+            </div>
+            <div id="status" class="status">Jawab soal untuk menarik tali!</div>
+            <div class="bottom"><button onclick="location.reload()">🔄 Reset</button><button onclick="toggleSound()">🔊
+                    Suara: <span id="snd">ON</span></button></div>
+        </div>
     </div>
 
-    <div class="teams">
-      <div class="panel">
-        <div class="panel-head blue">TIM BIRU</div>
-        <div class="question" id="qBlue"></div>
-        <div class="answers" id="aBlue"></div>
-      </div>
-      <div class="panel">
-        <div class="panel-head red">TIM MERAH</div>
-        <div class="question" id="qRed"></div>
-        <div class="answers" id="aRed"></div>
-      </div>
-    </div>
-
-    <div class="status" id="status"></div>
-    <button class="reset" onclick="location.reload()">🔄 Ganti Link / Mulai Ulang</button>
-  </div>
-
-  <div id="result" class="setup-wrap hidden" style="position:fixed;inset:0;background:#000b;z-index:30">
-    <div class="setup-card">
-      <div id="winnerIcon" style="font-size:70px">🏆</div>
-      <h1 id="winner"></h1>
-      <button class="primary" onclick="location.reload()">🔄 MAIN LAGI</button>
-    </div>
-  </div>
-
-  <script>
-    let questions = [], current = 0, ropePos = 0, locked = false;
-    const WIN = 6;
-
-    function shuffle(a) {
-      a = [...a];
-      for (let i = a.length - 1; i > 0; i--) {let j = Math.floor(Math.random() * (i + 1));[a[i], a[j]] = [a[j], a[i]]}
-      return a;
-    }
-    function getCell(row, i) {
-      return row.c[i] && row.c[i].v != null ? String(row.c[i].v).trim() : "";
-    }
-    function getSheetInfo(url) {
-      const m = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
-      if (!m) throw Error("Link Google Sheets tidak valid.");
-      const gid = (url.match(/[?#&]gid=([0-9]+)/) || [])[1] || "0";
-      return {id: m[1], gid};
-    }
-    async function connectSheet() {
-      const btn = document.getElementById("connectBtn"), err = document.getElementById("error");
-      err.textContent = "";
-      try {
-        const {id, gid} = getSheetInfo(document.getElementById("sheetUrl").value.trim());
-        btn.disabled = true; btn.textContent = "⏳ MEMUAT SOAL...";
-        const url = `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:json&gid=${gid}`;
-        const r = await fetch(url);
-        if (!r.ok) throw Error("Google Sheets tidak bisa diakses.");
-        const text = await r.text(), s = text.indexOf("{"), e = text.lastIndexOf("}");
-        const data = JSON.parse(text.slice(s, e + 1));
-        questions = [];
-        (data.table.rows || []).forEach(row => {
-          const q = getCell(row, 0), good = getCell(row, 1), w1 = getCell(row, 2), w2 = getCell(row, 3), w3 = getCell(row, 4);
-          if (q && good && w1 && w2 && w3) {
-            questions.push({
-              q, answers: shuffle([
-                {t: good, c: true}, {t: w1, c: false}, {t: w2, c: false}, {t: w3, c: false}
-              ])
-            });
-          }
-        });
-        if (!questions.length) throw Error("Soal tidak ditemukan. Pastikan kolom A-E terisi mulai baris 2.");
-        document.getElementById("setup").classList.add("hidden");
-        document.getElementById("game").classList.remove("hidden");
-        showQuestion();
-      } catch (x) {
-        err.textContent = "❌ " + x.message + " Pastikan akses Sheet adalah 'Siapa saja yang memiliki link → Pelihat'.";
-      } finally {btn.disabled = false; btn.textContent = "📥 HUBUNGKAN SOAL"}
-    }
-    function showQuestion() {
-      setFace("tired");
-      locked = false;
-      const q = questions[current % questions.length];
-      document.getElementById("qBlue").textContent = q.q;
-      document.getElementById("qRed").textContent = q.q;
-      makeAnswers("aBlue", q); makeAnswers("aRed", q);
-      document.getElementById("status").textContent = `Soal ${current + 1} • Tarik sampai penanda mencapai salah satu sisi!`;
-    }
-    function makeAnswers(id, q) {
-      const box = document.getElementById(id); box.innerHTML = "";
-      q.answers.forEach((a, i) => {
-        const b = document.createElement("button"); b.className = "answer"; b.textContent = a.t;
-        b.onclick = () => answer(a, b, box); box.appendChild(b);
-      });
-    }
-    function setFace(winner) {
-      const blue = document.getElementById("bluePerson");
-      const red = document.getElementById("redPerson");
-      [blue, red].forEach(p => p.classList.remove("happy", "angry", "tired"));
-      if (winner === "blue") {blue.classList.add("happy"); red.classList.add("angry");}
-      else if (winner === "red") {red.classList.add("happy"); blue.classList.add("angry");}
-      else {blue.classList.add("tired"); red.classList.add("tired");}
-    }
-    function answer(a, button, box) {
-      if (locked) return;
-      locked = true;
-      const q = questions[current % questions.length];
-      box.querySelectorAll(".answer").forEach(b => b.disabled = true);
-
-      // Tarikan tidak selalu sama besar: setiap soal memberi tenaga acak 1–3.
-      // Jadi ada soal yang hanya menggeser sedikit dan ada yang lebih kuat.
-      const pullPower = 1 + Math.floor(Math.random() * 3);
-
-      if (a.c) {
-        button.classList.add("correct");
-        ropePos -= pullPower;
-        setFace("blue");
-        pullEffect("blue", pullPower);
-        document.getElementById("status").textContent = `✅ BENAR! Tim Biru menarik ${pullPower} langkah!`;
-      } else {
-        button.classList.add("wrong");
-        ropePos += pullPower;
-        setFace("red");
-        pullEffect("red", pullPower);
-        document.getElementById("status").textContent = `❌ SALAH! Tim Merah menarik ${pullPower} langkah!`;
-        [...box.querySelectorAll(".answer")].forEach((b, i) => {
-          if (q.answers[i].c) b.classList.add("correct")
-        });
-      }
-
-      moveRope();
-      if (ropePos <= -WIN) return setTimeout(() => finish("🔵 TIM BIRU MENANG!"), 700);
-      if (ropePos >= WIN) return setTimeout(() => finish("🔴 TIM MERAH MENANG!"), 700);
-      current++;
-      setTimeout(showQuestion, 850);
-    }
-    function pullEffect(direction, power) {
-      const blue = document.getElementById("bluePerson");
-      const red = document.getElementById("redPerson");
-      const rope = document.getElementById("rope");
-      const flag = document.getElementById("flag");
-      const grips = document.querySelectorAll(".hand,.hand2");
-      const dust = document.querySelectorAll(".dust");
-
-      [blue, red].forEach(p => p.classList.remove("pulling-left", "pulling-right", "shake"));
-      rope.classList.remove("pull-left", "pull-right");
-      flag.classList.remove("pulse");
-      grips.forEach(g => {g.classList.remove("grip"); void g.offsetWidth; g.classList.add("grip")});
-      dust.forEach(d => d.classList.remove("show"));
-      void blue.offsetWidth; void red.offsetWidth; void rope.offsetWidth;
-
-      if (direction === "blue") {
-        blue.classList.add("pulling-left");
-        red.classList.add("shake");
-        rope.classList.add("pull-left");
-      } else {
-        red.classList.add("pulling-right");
-        blue.classList.add("shake");
-        rope.classList.add("pull-right");
-      }
-
-      // Hentakan makin kuat sesuai tenaga soal.
-      flag.classList.add("pulse");
-      flag.style.setProperty("--power", power);
-      dust.forEach(d => d.classList.add("show"));
-
-      const bend = direction === "blue" ? -(6 + power * 4) : (6 + power * 4);
-      const sway = direction === "blue" ? -power * 8 : power * 8;
-      const path = document.getElementById("ropePath");
-      path.setAttribute("d", `M0,50 C250,${50 + bend} 500,${50 - sway} 750,${50 + bend / 2} C850,${50 + bend / 3} 930,${50} 1000,50`);
-      setTimeout(() => {
-        path.setAttribute("d", "M0,50 C250,50 750,50 1000,50");
-      }, 500);
-    }
-
-    function moveRope() {
-      const x = ropePos * 10; // perpindahan visual dibuat halus
-      document.getElementById("rope").style.transform = `translateX(${x}px)`;
-      document.getElementById("flag").style.transform = `translateX(calc(-50% + ${x}px))`;
-      document.getElementById("bluePerson").style.transform = `scaleX(-1) translateX(${Math.max(0, -ropePos) * 2}px)`;
-      document.getElementById("redPerson").style.transform = `translateX(${Math.max(0, ropePos) * 2}px)`;
-    }
-    function finish(text) {
-      document.getElementById("winner").textContent = text;
-      document.getElementById("result").classList.remove("hidden");
-    }
-  </script>
+    <script>
+        let data = [], n = 0, position = 0, blueScore = 0, redScore = 0, locked = false, sound = true;
+        const shuffle = a => {a = [...a]; for (let i = a.length - 1; i; i--) {let j = Math.floor(Math.random() * (i + 1));[a[i], a[j]] = [a[j], a[i]]} return a};
+        function getId(u) {let m = u.match(/\/spreadsheets\/d\/([A-Za-z0-9_-]+)/); if (!m) throw Error("Link Google Sheets tidak valid."); let g = (u.match(/[?#&]gid=(\d+)/) || [])[1] || "0"; return [m[1], g]}
+        async function connect() {
+            try {
+                let [id, gid] = getId(document.getElementById('url').value.trim());
+                let r = await fetch(`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:json&gid=${gid}`);
+                if (!r.ok) throw Error("Google Sheet tidak bisa diakses.");
+                let t = await r.text(), j = JSON.parse(t.slice(t.indexOf('{'), t.lastIndexOf('}') + 1)); data = [];
+                (j.table.rows || []).forEach(x => {let v = x.c || []; let a = i => v[i]?.v == null ? "" : String(v[i].v).trim(); if (a(0) && a(1) && a(2) && a(3) && a(4)) data.push({q: a(0), ans: shuffle([{t: a(1), ok: true}, {t: a(2)}, {t: a(3)}, {t: a(4)}])})});
+                if (!data.length) throw Error("Tidak ada soal pada kolom A-E.");
+                document.getElementById('setup').classList.add('hide'); document.getElementById('game').classList.remove('hide'); makePeople(); show();
+            } catch (e) {document.getElementById('err').textContent = "❌ " + e.message + " Cek akses Sheet."}
+        }
+        function person(color, i) {
+            return `<div class="person" id="${color}${i}"><svg viewBox="0 0 180 220">
+<ellipse class="shoe" cx="62" cy="204" rx="27" ry="9"/><ellipse class="shoe" cx="119" cy="202" rx="27" ry="9"/>
+<path class="skin edge" d="M50 145 L61 196 L77 196 L75 143Z"/><path class="skin edge" d="M103 143 L116 194 L133 194 L126 140Z"/>
+<path class="${color === 'blue' ? 'shirtB' : 'shirtR'} edge" d="M46 83 Q88 62 130 86 L137 145 Q90 164 42 143Z"/>
+<path class="skin edge" d="M55 92 Q30 106 21 126 L31 134 Q49 120 66 114Z"/>
+<circle class="skin edge" cx="28" cy="129" r="9"/>
+<path class="skin edge" d="M120 94 Q148 106 159 126 L149 134 Q130 119 113 114Z"/>
+<circle class="skin edge" cx="158" cy="130" r="9"/>
+<circle class="skin edge" cx="88" cy="54" r="35"/>
+<path class="hair edge" d="M53 55 Q49 17 85 15 Q122 12 124 50 Q109 32 90 34 Q68 37 53 55Z"/>
+<g class="face"><path class="b1 edge" d="M69 51 L79 49"/><path class="b2 edge" d="M98 49 L108 51"/><circle cx="75" cy="60" r="3.5"/><circle cx="102" cy="60" r="3.5"/><path class="mouth edge" d="M79 76 Q88 83 98 76"/></g>
+</svg></div>`}
+        function makePeople() {document.getElementById('blueTeam').innerHTML = [0, 1, 2].map(i => person('blue', i)).join(''); document.getElementById('redTeam').innerHTML = [0, 1, 2].map(i => person('red', i)).join('')}
+        function face(side, win) {for (let c of ['blue', 'red']) for (let i = 0; i < 3; i++) {let x = document.getElementById(c + i); x.classList.remove('happy', 'angry'); if (c === side) x.classList.add(win ? 'happy' : 'angry')} }
+        function show() {locked = false; let q = data[n % data.length]; document.getElementById('qB').textContent = q.q; document.getElementById('qR').textContent = q.q; makeAns('aB', q); makeAns('aR', q); document.getElementById('status').textContent = `Soal ${n + 1} • Pilih jawaban`; move()}
+        function makeAns(id, q) {let b = document.getElementById(id); b.innerHTML = ''; q.ans.forEach(a => {let x = document.createElement('button'); x.className = 'ans'; x.textContent = a.t; x.onclick = () => answer(a, x, b); b.appendChild(x)})}
+        function answer(a, btn, box) {if (locked) return; locked = true; box.querySelectorAll('button').forEach(x => x.disabled = true); let p = 1 + Math.floor(Math.random() * 3), side = a.ok ? 'blue' : 'red'; if (a.ok) {blueScore++; btn.classList.add('correct')} else {redScore++; btn.classList.add('wrong')} position += (side === 'blue' ? -p : p); face(side, true); for (let c of ['blue', 'red']) {for (let i = 0; i < 3; i++) {let x = document.getElementById(c + i); x.classList.add(c === side ? (c === 'blue' ? 'pullB' : 'pullR') : 'lose');} } document.querySelectorAll('.dust').forEach(x => {x.classList.remove('show'); void x.offsetWidth; x.classList.add('show')}); document.getElementById('ropeBox').classList.add('ropeTug'); bend(side, p); move(); document.getElementById('score').textContent = `${blueScore} : ${redScore}`; document.getElementById('status').textContent = a.ok ? `✅ BENAR! Tim Biru menarik ${p === 1 ? 'sedikit' : p === 2 ? 'sedang' : 'kuat'}!` : `❌ SALAH! Tim Merah menarik ${p === 1 ? 'sedikit' : p === 2 ? 'sedang' : 'kuat'}!`; if (Math.abs(position) >= 8) {setTimeout(() => {alert(side === 'blue' ? '🏆 TIM BIRU MENANG!' : '🏆 TIM MERAH MENANG!'); location.reload()}, 900)} else {n++; setTimeout(() => {document.querySelectorAll('.person').forEach(x => x.className = 'person'); document.getElementById('ropeBox').classList.remove('ropeTug'); show()}, 1000)} }
+        function bend(side, p) {let a = (side === 'blue' ? -1 : 1) * (8 + p * 8); let d = `M0 50 C250 ${50 + a} 500 ${50 - a} 750 ${50 + a / 2} C850 ${50 + a / 3} 930 50 1000 50`; for (let id of ['rope', 'ropeShadow', 'ropeLight']) document.getElementById(id).setAttribute('d', d); setTimeout(() => {for (let id of ['rope', 'ropeShadow', 'ropeLight']) document.getElementById(id).setAttribute('d', 'M0 50 C250 50 750 50 1000 50')}, 650)}
+        function move() {let x = position * 17; document.getElementById('ropeBox').style.transform = `translateX(${x}px)`; document.getElementById('flag').style.transform = `translateX(calc(-50% + ${x}px))`}
+        function toggleSound() {sound = !sound; document.getElementById('snd').textContent = sound ? 'ON' : 'OFF'}
+    </script>
 </body>
 
 </html>
