@@ -4,667 +4,1020 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tarik Tambang - Quiz</title>
+  <title>Tarik Tambang Quiz</title>
   <style>
     * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent
+      box-sizing: border-box
     }
 
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(#87ceeb, #eefaff);
-      min-height: 100vh
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #eaf7ff 0%, #fff 55%, #e9f7e4 100%);
+      color: #202020
     }
 
-    .game {
-      width: 100%;
-      max-width: 680px;
-      margin: auto;
-      padding: 14px
+    button,
+    input {
+      font: inherit
     }
 
-    h1 {
-      text-align: center;
-      margin: 4px 0 14px;
-      font-size: 28px
+    .hidden {
+      display: none !important
     }
 
-    .panel,
-    .questionBox {
+    .setup-wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px
+    }
+
+    .setup-card {
+      width: min(520px, 100%);
       background: #fff;
-      border-radius: 18px;
-      padding: 18px;
-      box-shadow: 0 5px 18px #0002
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: 0 12px 40px #0002;
+      text-align: center
     }
 
-    .setupText {
-      font-size: 14px;
-      line-height: 1.55;
-      color: #555
+    .setup-card h1 {
+      margin: 0 0 8px;
+      font-size: 30px
     }
 
-    #loading {
-      text-align: center;
-      font-weight: bold;
-      margin: 12px 0
+    .setup-card p {
+      color: #666;
+      line-height: 1.5
     }
 
-    #error {
+    .setup-card input {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #d8d8d8;
+      border-radius: 13px;
+      outline: none;
+      margin: 10px 0
+    }
+
+    .setup-card input:focus {
+      border-color: #2563eb
+    }
+
+    .primary {
+      width: 100%;
+      border: 0;
+      border-radius: 13px;
+      padding: 15px;
+      background: #1f2937;
+      color: #fff;
+      font-weight: 800;
+      cursor: pointer
+    }
+
+    .error {
       color: #c62828;
       font-weight: bold;
-      margin-top: 10px;
+      margin-top: 12px;
       line-height: 1.4
     }
 
-    #gameArea {
-      display: none
+    .note {
+      font-size: 13px;
+      text-align: left;
+      background: #f5f7fa;
+      padding: 12px;
+      border-radius: 12px;
+      margin-top: 14px
     }
 
-    .score {
-      display: flex;
-      justify-content: space-between;
-      font-weight: bold;
-      margin: 8px 2px 10px
+    .game {
+      max-width: 1250px;
+      margin: auto;
+      padding: 14px 18px 35px
     }
 
-    .blueText {
-      color: #1769ff
+    .header {
+      text-align: center
     }
 
-    .redText {
-      color: #e53935
+    .header h1 {
+      font-size: 34px;
+      margin: 5px 0 2px
+    }
+
+    .header p {
+      margin: 0;
+      color: #666;
+      font-weight: bold
     }
 
     .arena {
       position: relative;
-      height: 240px;
-      background: #80c95a;
-      border: 4px solid #333;
-      border-radius: 20px;
+      height: 285px;
+      max-width: 900px;
+      margin: 4px auto 0;
       overflow: hidden
     }
 
-    .ground {
+    .sky {
+      position: absolute;
+      inset: 0 0 65px;
+      background: linear-gradient(#bfe9ff, #f8fdff);
+      border-radius: 28px 28px 0 0
+    }
+
+    .cloud {
+      position: absolute;
+      background: #fff;
+      border-radius: 50px;
+      opacity: .8
+    }
+
+    .cloud:before,
+    .cloud:after {
+      content: "";
+      position: absolute;
+      background: #fff;
+      border-radius: 50%
+    }
+
+    .cloud {
+      width: 100px;
+      height: 28px
+    }
+
+    .cloud:before {
+      width: 48px;
+      height: 48px;
+      left: 16px;
+      top: -20px
+    }
+
+    .cloud:after {
+      width: 58px;
+      height: 58px;
+      right: 12px;
+      top: -28px
+    }
+
+    .c1 {
+      left: 7%;
+      top: 45px
+    }
+
+    .c2 {
+      right: 8%;
+      top: 75px;
+      transform: scale(.75)
+    }
+
+    .grass {
       position: absolute;
       bottom: 0;
       left: 0;
-      width: 100%;
-      height: 48px;
-      background: #795548
+      right: 0;
+      height: 76px;
+      background: linear-gradient(#72c45b, #54a948);
+      border-radius: 0 0 28px 28px
     }
 
-    .character {
+    .center-line {
       position: absolute;
-      bottom: 40px;
-      font-size: 64px;
-      transition: .4s
+      bottom: 62px;
+      left: 50%;
+      height: 110px;
+      border-left: 3px dashed #fff8;
+      transform: translateX(-50%)
     }
 
-    .blue {
-      left: 7px
-    }
-
-    .red {
-      right: 7px;
-      transform: scaleX(-1)
-    }
-
-    .rope {
+    .rope-line {
       position: absolute;
-      top: 130px;
-      left: 10%;
-      width: 80%;
-      height: 10px;
-      background: #c49a6c;
+      left: 18%;
+      right: 18%;
+      top: 156px;
+      height: 9px;
+      background: #a66a36;
       border: 2px solid #704214;
       border-radius: 10px;
-      transition: .4s
+      box-shadow: 0 2px 3px #0003;
+      transition: .45s
     }
 
     .flag {
       position: absolute;
-      top: 87px;
+      top: 130px;
       left: 50%;
+      width: 26px;
+      height: 36px;
+      background: #ffd21c;
+      border: 3px solid #b08c00;
+      border-radius: 4px;
       transform: translateX(-50%);
-      font-size: 38px;
-      transition: .4s
+      transition: .45s;
+      z-index: 5
     }
 
-    #status {
-      text-align: center;
-      font-weight: bold;
-      margin: 10px 0
+    .flag:before {
+      content: "";
+      position: absolute;
+      height: 47px;
+      border-left: 4px solid #7a5a23;
+      left: 8px;
+      top: 29px
     }
 
-    #question {
-      text-align: center;
-      font-size: 21px;
-      font-weight: bold;
-      line-height: 1.4;
-      min-height: 58px
+    .person {
+      position: absolute;
+      top: 76px;
+      width: 175px;
+      height: 145px;
+      transition: .45s;
+      z-index: 4
+    }
+
+    .person.left {
+      left: 7%
+    }
+
+    .person.right {
+      right: 7%
+    }
+
+    .body {
+      position: absolute;
+      width: 70px;
+      height: 72px;
+      border-radius: 22px 22px 12px 12px;
+      top: 49px;
+      border: 3px solid #252525
+    }
+
+    .left .body {
+      background: #1565e8;
+      left: 62px
+    }
+
+    .right .body {
+      background: #e53935;
+      left: 43px
+    }
+
+    .head {
+      position: absolute;
+      width: 57px;
+      height: 57px;
+      background: #f4bb91;
+      border: 3px solid #252525;
+      border-radius: 50%;
+      top: 8px;
+      z-index: 2
+    }
+
+    .left .head {
+      left: 75px
+    }
+
+    .right .head {
+      left: 50px
+    }
+
+    .hair {
+      position: absolute;
+      width: 55px;
+      height: 18px;
+      background: #292929;
+      border-radius: 14px 14px 5px 5px;
+      top: 7px;
+      z-index: 3
+    }
+
+    .left .hair {
+      left: 76px
+    }
+
+    .right .hair {
+      left: 51px
+    }
+
+    .arm {
+      position: absolute;
+      width: 78px;
+      height: 14px;
+      background: #f4bb91;
+      border: 3px solid #252525;
+      border-radius: 12px;
+      top: 69px;
+      z-index: 5
+    }
+
+    .left .arm {
+      left: 98px;
+      transform: rotate(-7deg)
+    }
+
+    .right .arm {
+      left: 4px;
+      transform: rotate(7deg)
+    }
+
+    .hand {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      background: #f4bb91;
+      border: 3px solid #252525;
+      border-radius: 50%;
+      top: 67px;
+      z-index: 6
+    }
+
+    .left .hand {
+      left: 167px
+    }
+
+    .right .hand {
+      left: -2px
+    }
+
+    .leg {
+      position: absolute;
+      width: 17px;
+      height: 55px;
+      background: #263238;
+      border: 3px solid #252525;
+      border-radius: 10px;
+      top: 112px
+    }
+
+    .left .leg1 {
+      left: 76px
+    }
+
+    .left .leg2 {
+      left: 111px
+    }
+
+    .right .leg1 {
+      left: 51px
+    }
+
+    .right .leg2 {
+      left: 86px
+    }
+
+    .shoe {
+      position: absolute;
+      width: 36px;
+      height: 15px;
+      background: #202020;
+      border-radius: 12px;
+      top: 157px
+    }
+
+    .left .shoe1 {
+      left: 64px
+    }
+
+    .left .shoe2 {
+      left: 103px
+    }
+
+    .right .shoe1 {
+      left: 39px
+    }
+
+    .right .shoe2 {
+      left: 78px
+    }
+
+    .left {
+      transform: scaleX(-1)
+    }
+
+    .right {
+      transform: scaleX(1)
+    }
+
+    .teams {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      max-width: 1200px;
+      margin: auto
+    }
+
+    .panel {
+      background: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 14px #0002;
+      border: 1px solid #ddd
+    }
+
+    .panel-head {
+      padding: 16px 15px;
+      color: #fff;
+      font-weight: 900;
+      font-size: 16px
+    }
+
+    .blue {
+      background: #073c99
+    }
+
+    .red {
+      background: #c5000b
+    }
+
+    .question {
+      padding: 16px 15px;
+      min-height: 74px;
+      font-weight: 800;
+      line-height: 1.4
     }
 
     .answers {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 12px
+      padding: 9px;
+      background: #f8f8f8
     }
 
     .answer {
-      background: #eee;
+      display: block;
       width: 100%;
-      min-height: 58px
-    }
-
-    .answer:active {
-      transform: scale(.97)
-    }
-
-    .correct {
-      background: #4caf50 !important;
-      color: #fff
-    }
-
-    .wrong {
-      background: #f44336 !important;
-      color: #fff
-    }
-
-    #message {
-      text-align: center;
-      font-weight: bold;
-      min-height: 24px;
-      margin: 10px 0
-    }
-
-    #result {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: #000c;
-      z-index: 10;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      color: #fff;
-      text-align: center;
-      padding: 20px
-    }
-
-    #result h2 {
-      font-size: 34px;
-      margin: 10px
-    }
-
-    .resultBtn {
+      min-height: 46px;
+      text-align: left;
+      border: 1px solid #ddd;
       background: #fff;
-      color: #111
+      padding: 12px 14px;
+      margin-bottom: 5px;
+      cursor: pointer;
+      border-radius: 3px;
+      transition: .15s
     }
 
-    @media(max-width:430px) {
+    .answer:hover {
+      background: #f0f0f0
+    }
+
+    .answer.correct {
+      background: #43a047 !important;
+      color: #fff;
+      border-color: #2e7d32
+    }
+
+    .answer.wrong {
+      background: #e53935 !important;
+      color: #fff;
+      border-color: #c62828
+    }
+
+    .status {
+      text-align: center;
+      font-weight: 800;
+      min-height: 25px;
+      margin: 14px 0
+    }
+
+    .reset {
+      display: block;
+      margin: 0 auto;
+      border: 0;
+      background: #222;
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 9px;
+      cursor: pointer
+    }
+
+    @media(max-width:760px) {
       .game {
         padding: 10px
       }
 
+      .teams {
+        grid-template-columns: 1fr;
+        gap: 12px
+      }
+
       .arena {
-        height: 205px
+        height: 245px
       }
 
-      .character {
-        font-size: 52px
+      .person {
+        transform: scale(.72)
       }
 
-      #question {
-        font-size: 18px
+      .person.left {
+        left: -1%
       }
 
-      .answer {
-        font-size: 15px
+      .person.right {
+        right: -1%
+      }
+
+      .rope-line {
+        left: 15%;
+        right: 15%
+      }
+
+      .header h1 {
+        font-size: 27px
+      }
+    }
+
+    .head .eye {
+      position: absolute;
+      width: 7px;
+      height: 9px;
+      background: #222;
+      border-radius: 50%;
+      top: 22px;
+      z-index: 5
+    }
+
+    .head .eye1 {
+      left: 14px
+    }
+
+    .head .eye2 {
+      right: 14px
+    }
+
+    .head .brow {
+      position: absolute;
+      width: 15px;
+      height: 4px;
+      background: #222;
+      border-radius: 5px;
+      top: 15px;
+      z-index: 5
+    }
+
+    .head .brow1 {
+      left: 9px;
+      transform: rotate(8deg)
+    }
+
+    .head .brow2 {
+      right: 9px;
+      transform: rotate(-8deg)
+    }
+
+    .head .mouth {
+      position: absolute;
+      width: 22px;
+      height: 10px;
+      border-bottom: 4px solid #7b2929;
+      border-radius: 0 0 18px 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      top: 35px;
+      z-index: 5
+    }
+
+
+    .person.happy .mouth {
+      height: 13px;
+      border-bottom: 4px solid #7b2929;
+      border-top: 0;
+      border-radius: 0 0 20px 20px
+    }
+
+    .person.happy .brow1 {
+      transform: rotate(-12deg)
+    }
+
+    .person.happy .brow2 {
+      transform: rotate(12deg)
+    }
+
+    .person.angry .mouth {
+      height: 10px;
+      border-bottom: 0;
+      border-top: 4px solid #7b2929;
+      border-radius: 20px 20px 0 0;
+      top: 38px
+    }
+
+    .person.angry .brow1 {
+      transform: rotate(25deg)
+    }
+
+    .person.angry .brow2 {
+      transform: rotate(-25deg)
+    }
+
+    .person.tired .eye {
+      height: 4px;
+      top: 25px;
+      border-radius: 8px
+    }
+
+
+    /* ===== EFEK TARIK TAMBANG ===== */
+    .rope-line {
+      transform-origin: center;
+    }
+
+    .person {
+      transform-origin: center bottom;
+    }
+
+    .person.pulling-left {
+      animation: pullLeft .42s ease-in-out;
+    }
+
+    .person.pulling-right {
+      animation: pullRight .42s ease-in-out;
+    }
+
+    .person.shake {
+      animation: shake .32s ease-in-out;
+    }
+
+    .rope-line.pull-left {
+      animation: ropeLeft .42s ease-in-out;
+    }
+
+    .rope-line.pull-right {
+      animation: ropeRight .42s ease-in-out;
+    }
+
+    .flag.pulse {
+      animation: flagPulse .42s ease-in-out;
+    }
+
+    .dust {
+      position: absolute;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #d8c7a1;
+      bottom: 55px;
+      opacity: 0;
+      z-index: 3;
+    }
+
+    .dust.show {
+      animation: dust .48s ease-out
+    }
+
+    .dust.d1 {
+      left: 16%
+    }
+
+    .dust.d2 {
+      left: 22%
+    }
+
+    .dust.d3 {
+      right: 16%
+    }
+
+    .dust.d4 {
+      right: 22%
+    }
+
+    @keyframes pullLeft {
+      0% {
+        transform: scaleX(-1) rotate(0) translateX(0)
+      }
+
+      35% {
+        transform: scaleX(-1) rotate(-7deg) translateX(-12px)
+      }
+
+      65% {
+        transform: scaleX(-1) rotate(4deg) translateX(5px)
+      }
+
+      100% {
+        transform: scaleX(-1) rotate(0) translateX(0)
+      }
+    }
+
+    @keyframes pullRight {
+      0% {
+        transform: rotate(0) translateX(0)
+      }
+
+      35% {
+        transform: rotate(7deg) translateX(12px)
+      }
+
+      65% {
+        transform: rotate(-4deg) translateX(-5px)
+      }
+
+      100% {
+        transform: rotate(0) translateX(0)
+      }
+    }
+
+    @keyframes shake {
+
+      0%,
+      100% {
+        transform: translateX(0)
+      }
+
+      25% {
+        transform: translateX(-5px)
+      }
+
+      50% {
+        transform: translateX(5px)
+      }
+
+      75% {
+        transform: translateX(-3px)
+      }
+    }
+
+    @keyframes ropeLeft {
+      0% {
+        margin-left: 0
+      }
+
+      35% {
+        margin-left: -12px
+      }
+
+      65% {
+        margin-left: 4px
+      }
+
+      100% {
+        margin-left: 0
+      }
+    }
+
+    @keyframes ropeRight {
+      0% {
+        margin-left: 0
+      }
+
+      35% {
+        margin-left: 12px
+      }
+
+      65% {
+        margin-left: -4px
+      }
+
+      100% {
+        margin-left: 0
+      }
+    }
+
+    @keyframes flagPulse {
+
+      0%,
+      100% {
+        scale: 1
+      }
+
+      50% {
+        scale: 1.25
+      }
+    }
+
+    @keyframes dust {
+      0% {
+        opacity: .8;
+        transform: translate(0, 0) scale(.6)
+      }
+
+      100% {
+        opacity: 0;
+        transform: translate(0, -22px) scale(1.8)
       }
     }
   </style>
 </head>
 
 <body>
-  <div class="game">
-    <h1>🪢 TARIK TAMBANG 🪢</h1>
 
-    <!--
-  GOOGLE SHEETS KAMU SUDAH DIPASANG OTOMATIS.
-  FORMAT:
-  A = Pertanyaan
-  B = Jawaban Benar
-  C = Jawaban Salah 1
-  D = Jawaban Salah 2
-  E = Jawaban Salah 3
--->
-    <div id="setup" class="panel">
-      <div class="setupText">
-        <b>📚 Sumber soal:</b> Google Sheets kamu<br><br>
+  <div id="setup" class="setup-wrap">
+    <div class="setup-card">
+      <div style="font-size:60px">🪢</div>
+      <h1>Game Tarik Tambang</h1>
+      <p>Masukkan link Google Sheets berisi soal. Setelah berhasil, halaman ini otomatis masuk ke permainan.</p>
+      <input id="sheetUrl" type="url" placeholder="Tempel link Google Sheets di sini">
+      <button class="primary" id="connectBtn" onclick="connectSheet()">📥 HUBUNGKAN SOAL</button>
+      <div id="error" class="error"></div>
+      <div class="note">
+        <b>Format Sheet:</b><br>
         A = Pertanyaan<br>
         B = Jawaban Benar<br>
         C = Jawaban Salah 1<br>
         D = Jawaban Salah 2<br>
-        E = Jawaban Salah 3
-      </div>
-      <div id="loading">⏳ Menghubungkan ke Google Sheets...</div>
-      <div id="error"></div>
-    </div>
-
-    <div id="gameArea">
-      <div class="score">
-        <span class="blueText">🔵 TIM BIRU</span>
-        <span class="redText">TIM MERAH 🔴</span>
-      </div>
-
-      <div class="arena">
-        <div class="character blue">🏃</div>
-        <div class="character red">🏃</div>
-        <div class="rope" id="rope"></div>
-        <div class="flag" id="flag">🚩</div>
-        <div class="ground"></div>
-      </div>
-
-      <div id="status"></div>
-
-      <div class="questionBox">
-        <div id="question"></div>
-        <div class="answers" id="answers"></div>
-        <div id="message"></div>
+        E = Jawaban Salah 3<br><br>
+        <b>Penting:</b> Google Sheets → Bagikan → Akses umum → Siapa saja yang memiliki link → Pelihat.
       </div>
     </div>
   </div>
 
-  <div id="result">
-    <h2 id="winner"></h2>
-    <p>Permainan selesai!</p>
-    <button class="resultBtn" onclick="location.reload()">🔄 MAIN LAGI</button>
+  <div id="game" class="game hidden">
+    <div class="header">
+      <h1>🪢 TARIK TAMBANG</h1>
+      <p>Jawab soal untuk menarik tali!</p>
+    </div>
+
+    <div class="arena">
+      <div class="sky"></div>
+      <div class="cloud c1"></div>
+      <div class="cloud c2"></div>
+      <div class="grass"></div>
+      <div class="dust d1"></div>
+      <div class="dust d2"></div>
+      <div class="dust d3"></div>
+      <div class="dust d4"></div>
+      <div class="center-line"></div>
+      <div class="rope-line" id="rope"></div>
+      <div class="flag" id="flag"></div>
+
+      <div class="person left" id="bluePerson">
+        <div class="head"><span class="eye eye1"></span><span class="eye eye2"></span><span
+            class="brow brow1"></span><span class="brow brow2"></span><span class="mouth"></span></div>
+        <div class="hair"></div>
+        <div class="body"></div>
+        <div class="arm"></div>
+        <div class="hand"></div>
+        <div class="leg leg1"></div>
+        <div class="leg leg2"></div>
+        <div class="shoe shoe1"></div>
+        <div class="shoe shoe2"></div>
+      </div>
+      <div class="person right" id="redPerson">
+        <div class="head"><span class="eye eye1"></span><span class="eye eye2"></span><span
+            class="brow brow1"></span><span class="brow brow2"></span><span class="mouth"></span></div>
+        <div class="hair"></div>
+        <div class="body"></div>
+        <div class="arm"></div>
+        <div class="hand"></div>
+        <div class="leg leg1"></div>
+        <div class="leg leg2"></div>
+        <div class="shoe shoe1"></div>
+        <div class="shoe shoe2"></div>
+      </div>
+    </div>
+
+    <div class="teams">
+      <div class="panel">
+        <div class="panel-head blue">TIM BIRU</div>
+        <div class="question" id="qBlue"></div>
+        <div class="answers" id="aBlue"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head red">TIM MERAH</div>
+        <div class="question" id="qRed"></div>
+        <div class="answers" id="aRed"></div>
+      </div>
+    </div>
+
+    <div class="status" id="status"></div>
+    <button class="reset" onclick="location.reload()">🔄 Ganti Link / Mulai Ulang</button>
+  </div>
+
+  <div id="result" class="setup-wrap hidden" style="position:fixed;inset:0;background:#000b;z-index:30">
+    <div class="setup-card">
+      <div id="winnerIcon" style="font-size:70px">🏆</div>
+      <h1 id="winner"></h1>
+      <button class="primary" onclick="location.reload()">🔄 MAIN LAGI</button>
+    </div>
   </div>
 
   <script>
-    /* =========================
-       GOOGLE SHEETS
-       ========================= */
+    let questions = [], current = 0, ropePos = 0, locked = false;
+    const WIN = 6;
 
-    const SHEET_ID = "1bjO7_rm4hc14hFFyk_-CY3BXTWKsoklt93DdNsaPP3s";
-    const SHEET_GID = "0";
-
-    /*
-       Data Sheet:
-       A = pertanyaan
-       B = benar
-       C = salah 1
-       D = salah 2
-       E = salah 3
-    */
-
-    let questions = [];
-    let currentQuestion = 0;
-    let ropePosition = 0;
-    let gameStarted = false;
-
-    const WIN_POSITION = 6;
-
-    const $ = id => document.getElementById(id);
-
-
-    /* =========================
-       ACAK JAWABAN
-       ========================= */
-
-    function shuffle(array) {
-      const arr = [...array];
-
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-
-      return arr;
+    function shuffle(a) {
+      a = [...a];
+      for (let i = a.length - 1; i > 0; i--) {let j = Math.floor(Math.random() * (i + 1));[a[i], a[j]] = [a[j], a[i]]}
+      return a;
     }
-
-
-    /* =========================
-       AMBIL DATA GOOGLE SHEETS
-       ========================= */
-
-    async function loadQuestions() {
-
+    function getCell(row, i) {
+      return row.c[i] && row.c[i].v != null ? String(row.c[i].v).trim() : "";
+    }
+    function getSheetInfo(url) {
+      const m = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+      if (!m) throw Error("Link Google Sheets tidak valid.");
+      const gid = (url.match(/[?#&]gid=([0-9]+)/) || [])[1] || "0";
+      return {id: m[1], gid};
+    }
+    async function connectSheet() {
+      const btn = document.getElementById("connectBtn"), err = document.getElementById("error");
+      err.textContent = "";
       try {
-
-        const url =
-          `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${SHEET_GID}`;
-
-        const response = await fetch(url);
-
-        if (!response.ok) {
-          throw new Error(
-            "Google Sheets tidak bisa diakses."
-          );
-        }
-
-        const text = await response.text();
-
-        const start = text.indexOf("{");
-        const end = text.lastIndexOf("}");
-
-        if (start === -1 || end === -1) {
-          throw new Error(
-            "Format data Google Sheets tidak terbaca."
-          );
-        }
-
-        const data =
-          JSON.parse(text.substring(start, end + 1));
-
-        const rows =
-          data.table.rows || [];
-
+        const {id, gid} = getSheetInfo(document.getElementById("sheetUrl").value.trim());
+        btn.disabled = true; btn.textContent = "⏳ MEMUAT SOAL...";
+        const url = `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:json&gid=${gid}`;
+        const r = await fetch(url);
+        if (!r.ok) throw Error("Google Sheets tidak bisa diakses.");
+        const text = await r.text(), s = text.indexOf("{"), e = text.lastIndexOf("}");
+        const data = JSON.parse(text.slice(s, e + 1));
         questions = [];
-
-        rows.forEach(row => {
-
-          const cells = row.c || [];
-
-          function value(index) {
-
-            if (
-              !cells[index] ||
-              cells[index].v === null ||
-              cells[index].v === undefined
-            ) {
-              return "";
-            }
-
-            return String(cells[index].v).trim();
-          }
-
-          const question = value(0);
-          const correct = value(1);
-          const wrong1 = value(2);
-          const wrong2 = value(3);
-          const wrong3 = value(4);
-
-          /*
-            Baris hanya dimasukkan jika
-            A sampai E semuanya terisi.
-          */
-
-          if (
-            question &&
-            correct &&
-            wrong1 &&
-            wrong2 &&
-            wrong3
-          ) {
-
-            const answers = shuffle([
-
-              {
-                text: correct,
-                correct: true
-              },
-
-              {
-                text: wrong1,
-                correct: false
-              },
-
-              {
-                text: wrong2,
-                correct: false
-              },
-
-              {
-                text: wrong3,
-                correct: false
-              }
-
-            ]);
-
+        (data.table.rows || []).forEach(row => {
+          const q = getCell(row, 0), good = getCell(row, 1), w1 = getCell(row, 2), w2 = getCell(row, 3), w3 = getCell(row, 4);
+          if (q && good && w1 && w2 && w3) {
             questions.push({
-              question: question,
-              answers: answers
+              q, answers: shuffle([
+                {t: good, c: true}, {t: w1, c: false}, {t: w2, c: false}, {t: w3, c: false}
+              ])
             });
           }
-
         });
-
-
-        if (questions.length === 0) {
-
-          throw new Error(
-            "Tidak ada soal yang ditemukan. Pastikan data soal berada mulai baris 2 dan kolom A-E terisi."
-          );
-
-        }
-
-
-        $("setup").style.display = "none";
-
-        $("gameArea").style.display = "block";
-
-        $("status").textContent =
-          `✅ ${questions.length} soal berhasil dimuat.`;
-
-        $("question").textContent =
-          "Soal sudah siap!";
-
-        $("message").textContent =
-          "Jawab pertanyaan untuk menarik tali.";
-
-        setTimeout(startGame, 700);
-
-
-      } catch (error) {
-
-        console.error(error);
-
-        $("loading").textContent =
-          "❌ Gagal mengambil soal.";
-
-        $("error").textContent =
-          error.message +
-          " Pastikan Google Sheets disetel ke 'Siapa saja yang memiliki link → Pelihat'.";
-
-      }
-
+        if (!questions.length) throw Error("Soal tidak ditemukan. Pastikan kolom A-E terisi mulai baris 2.");
+        document.getElementById("setup").classList.add("hidden");
+        document.getElementById("game").classList.remove("hidden");
+        showQuestion();
+      } catch (x) {
+        err.textContent = "❌ " + x.message + " Pastikan akses Sheet adalah 'Siapa saja yang memiliki link → Pelihat'.";
+      } finally {btn.disabled = false; btn.textContent = "📥 HUBUNGKAN SOAL"}
     }
-
-
-    /* =========================
-       MULAI GAME
-       ========================= */
-
-    function startGame() {
-
-      if (!questions.length) return;
-
-      gameStarted = true;
-
-      currentQuestion = 0;
-
-      ropePosition = 0;
-
-      updateRope();
-
-      showQuestion();
-
-    }
-
-
-    /* =========================
-       TAMPILKAN SOAL
-       ========================= */
-
     function showQuestion() {
-
-      const q =
-        questions[currentQuestion % questions.length];
-
-      $("question").textContent =
-        q.question;
-
-      $("answers").innerHTML = "";
-
-      $("message").textContent = "";
-
-      q.answers.forEach((answer, index) => {
-
-        const button =
-          document.createElement("button");
-
-        button.className = "answer";
-
-        button.textContent =
-          `${String.fromCharCode(65 + index)}. ${answer.text}`;
-
-        button.onclick =
-          () => checkAnswer(
-            index,
-            button
-          );
-
-        $("answers").appendChild(button);
-
+      setFace("tired");
+      locked = false;
+      const q = questions[current % questions.length];
+      document.getElementById("qBlue").textContent = q.q;
+      document.getElementById("qRed").textContent = q.q;
+      makeAnswers("aBlue", q); makeAnswers("aRed", q);
+      document.getElementById("status").textContent = `Soal ${current + 1} • Tarik sampai penanda mencapai salah satu sisi!`;
+    }
+    function makeAnswers(id, q) {
+      const box = document.getElementById(id); box.innerHTML = "";
+      q.answers.forEach((a, i) => {
+        const b = document.createElement("button"); b.className = "answer"; b.textContent = a.t;
+        b.onclick = () => answer(a, b, box); box.appendChild(b);
       });
-
     }
+    function setFace(state) {
+      const people = document.querySelectorAll(".person");
+      people.forEach(p => {
+        p.classList.remove("happy", "angry", "tired");
+        if (state) p.classList.add(state);
+      });
+    }
+    function answer(a, button, box) {
+      if (locked) return; locked = true;
+      const q = questions[current % questions.length];
+      box.querySelectorAll(".answer").forEach(b => b.disabled = true);
+      if (a.c) {button.classList.add("correct"); ropePos--; setFace("happy"); pullEffect("blue"); document.getElementById("status").textContent = "✅ BENAR! Tim Biru menarik tali!";}
+      else {
+        button.classList.add("wrong"); ropePos++; setFace("angry"); pullEffect("red"); document.getElementById("status").textContent = "❌ SALAH! Tim Merah menarik tali!";
+        [...box.querySelectorAll(".answer")].forEach((b, i) => {if (q.answers[i].c) b.classList.add("correct")});
+      }
+      moveRope();
+      if (ropePos <= -WIN) return setTimeout(() => finish("🔵 TIM BIRU MENANG!"), 650);
+      if (ropePos >= WIN) return setTimeout(() => finish("🔴 TIM MERAH MENANG!"), 650);
+      current++; setTimeout(showQuestion, 750);
+    }
+    function pullEffect(direction) {
+      const blue = document.getElementById("bluePerson");
+      const red = document.getElementById("redPerson");
+      const rope = document.getElementById("rope");
+      const flag = document.getElementById("flag");
+      const dust = document.querySelectorAll(".dust");
 
+      blue.classList.remove("pulling-left", "pulling-right", "shake");
+      red.classList.remove("pulling-left", "pulling-right", "shake");
+      rope.classList.remove("pull-left", "pull-right");
+      flag.classList.remove("pulse");
+      dust.forEach(d => d.classList.remove("show"));
 
-    /* =========================
-       CEK JAWABAN
-       ========================= */
+      void blue.offsetWidth;
+      void red.offsetWidth;
+      void rope.offsetWidth;
 
-    function checkAnswer(index, button) {
-
-      if (!gameStarted) return;
-
-      const q =
-        questions[currentQuestion % questions.length];
-
-      const correctIndex =
-        q.answers.findIndex(
-          answer => answer.correct
-        );
-
-      const buttons =
-        document.querySelectorAll(".answer");
-
-      buttons.forEach(
-        b => b.disabled = true
-      );
-
-
-      if (index === correctIndex) {
-
-        button.classList.add("correct");
-
-        ropePosition--;
-
-        $("message").textContent =
-          "✅ BENAR! Tim Biru menarik!";
-
+      if (direction === "blue") {
+        blue.classList.add("pulling-left");
+        red.classList.add("shake");
+        rope.classList.add("pull-left");
       } else {
-
-        button.classList.add("wrong");
-
-        if (buttons[correctIndex]) {
-          buttons[correctIndex]
-            .classList.add("correct");
-        }
-
-        ropePosition++;
-
-        $("message").textContent =
-          "❌ SALAH! Tim Merah menarik!";
-
+        red.classList.add("pulling-right");
+        blue.classList.add("shake");
+        rope.classList.add("pull-right");
       }
 
-
-      updateRope();
-
-
-      if (ropePosition <= -WIN_POSITION) {
-
-        setTimeout(
-          () => finishGame(
-            "🔵 TIM BIRU MENANG!"
-          ),
-          700
-        );
-
-        return;
-      }
-
-
-      if (ropePosition >= WIN_POSITION) {
-
-        setTimeout(
-          () => finishGame(
-            "🔴 TIM MERAH MENANG!"
-          ),
-          700
-        );
-
-        return;
-      }
-
-
-      currentQuestion++;
-
-      setTimeout(
-        showQuestion,
-        900
-      );
-
+      flag.classList.add("pulse");
+      dust.forEach(d => d.classList.add("show"));
     }
 
-
-    /* =========================
-       GERAKAN TALI
-       ========================= */
-
-    function updateRope() {
-
-      const movement =
-        ropePosition * 25;
-
-      $("rope").style.transform =
-        `translateX(${movement}px)`;
-
-      $("flag").style.left =
-        `calc(50% + ${movement}px)`;
-
+    function moveRope() {
+      const x = ropePos * 28;
+      document.getElementById("rope").style.transform = `translateX(${x}px)`;
+      document.getElementById("flag").style.transform = `translateX(calc(-50% + ${x}px))`;
+      document.getElementById("bluePerson").style.transform = `scaleX(-1) translateX(${Math.max(0, -ropePos) * 2}px)`;
+      document.getElementById("redPerson").style.transform = `translateX(${Math.max(0, ropePos) * 2}px)`;
     }
-
-
-    /* =========================
-       SELESAI
-       ========================= */
-
-    function finishGame(text) {
-
-      gameStarted = false;
-
-      $("winner").textContent =
-        text;
-
-      $("result").style.display =
-        "flex";
-
+    function finish(text) {
+      document.getElementById("winner").textContent = text;
+      document.getElementById("result").classList.remove("hidden");
     }
-
-
-    /* =========================
-       JALANKAN
-       ========================= */
-
-    loadQuestions();
-
   </script>
 </body>
 
