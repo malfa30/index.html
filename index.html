@@ -1,444 +1,710 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Game Tarik Tambang</title>
-<style>
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:Arial,Helvetica,sans-serif;
-  background:#fff;
-  color:#222;
-}
-.game{
-  width:100%;
-  max-width:1200px;
-  margin:auto;
-  min-height:100vh;
-  padding:24px 22px 30px;
-}
-.top{
-  text-align:center;
-  padding-top:5px;
-}
-.tug{
-  height:170px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  position:relative;
-}
-.rope{
-  position:absolute;
-  width:230px;
-  height:7px;
-  background:#9a5a2b;
-  border-radius:8px;
-}
-.knot{
-  position:absolute;
-  width:22px;
-  height:28px;
-  background:#ffd51a;
-  border:3px solid #b99000;
-  border-radius:4px;
-  z-index:3;
-}
-.person{
-  position:absolute;
-  width:70px;
-  height:90px;
-  bottom:35px;
-}
-.person .head{
-  position:absolute;
-  width:42px;
-  height:42px;
-  border-radius:50%;
-  background:#f2b58c;
-  border:2px solid #333;
-  top:0;
-}
-.person .hair{
-  position:absolute;
-  width:40px;
-  height:12px;
-  background:#252525;
-  border-radius:8px 8px 2px 2px;
-  top:-2px;
-  z-index:2;
-}
-.person .body{
-  position:absolute;
-  width:43px;
-  height:38px;
-  background:#1769e8;
-  border:2px solid #333;
-  border-radius:8px 8px 3px 3px;
-  top:40px;
-  left:8px;
-}
-.person .leg{
-  position:absolute;
-  width:12px;
-  height:28px;
-  background:#333;
-  top:72px;
-  border-radius:4px;
-}
-.person .leg.l{left:13px}.person .leg.r{left:34px}
-.person.left{margin-right:205px;transform:scaleX(-1)}
-.person.right{margin-left:205px}
-.person.right .body{background:#d9272e}
-.person.left .head{left:10px}.person.right .head{left:10px}
-.instruction{
-  margin-top:-8px;
-  font-weight:bold;
-  font-size:16px;
-}
-.teams{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:18px;
-  margin-top:14px;
-}
-.team{
-  border:1px solid #ddd;
-  border-radius:4px;
-  overflow:hidden;
-  box-shadow:0 2px 5px #0001;
-}
-.teamTitle{
-  color:white;
-  padding:18px 15px;
-  font-weight:bold;
-  font-size:16px;
-  min-height:58px;
-}
-.blueTitle{background:#073c99}
-.redTitle{background:#c4000b}
-.answers{
-  padding:9px;
-  background:#fafafa;
-}
-.answer{
-  display:block;
-  width:100%;
-  min-height:45px;
-  text-align:left;
-  padding:12px 14px;
-  margin:0 0 4px;
-  background:#fff;
-  border:1px solid #ddd;
-  font-size:14px;
-  cursor:pointer;
-  transition:.15s;
-}
-.answer:hover{background:#f0f0f0}
-.answer:active{transform:scale(.99)}
-.answer.correct{
-  background:#43a047!important;
-  color:white;
-  border-color:#2e7d32;
-}
-.answer.wrong{
-  background:#e53935!important;
-  color:white;
-  border-color:#c62828;
-}
-.question{
-  padding:13px 15px;
-  min-height:65px;
-  font-weight:bold;
-  line-height:1.35;
-  font-size:15px;
-}
-.blueQ{background:#073c99;color:#fff}
-.redQ{background:#c4000b;color:#fff}
-.status{
-  text-align:center;
-  font-weight:bold;
-  margin:18px 0 0;
-  min-height:22px;
-}
-#start{
-  display:block;
-  margin:14px auto 0;
-  border:0;
-  background:#222;
-  color:#fff;
-  padding:12px 28px;
-  border-radius:8px;
-  font-weight:bold;
-  font-size:16px;
-  cursor:pointer;
-}
-#loading{
-  text-align:center;
-  font-weight:bold;
-  margin:8px 0 12px;
-}
-#error{
-  text-align:center;
-  color:#c62828;
-  font-weight:bold;
-  max-width:700px;
-  margin:10px auto;
-}
-.setup{
-  text-align:center;
-  padding:10px;
-}
-.title{
-  text-align:center;
-  margin-top:26px;
-  font-size:43px;
-  font-weight:900;
-  letter-spacing:1px;
-}
-.title .yellow{color:#f4c400;text-shadow:2px 2px #222}
-.title .white{color:#fff;text-shadow:2px 2px 0 #222, -1px -1px 0 #222,1px -1px 0 #222,-1px 1px 0 #222}
-.subtitle{
-  display:table;
-  margin:8px auto 0;
-  background:#222;
-  color:#fff;
-  padding:8px 16px;
-  font-size:18px;
-  font-weight:bold;
-}
-#result{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:#000b;
-  z-index:20;
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-  color:#fff;
-  text-align:center;
-}
-#result h2{font-size:38px}
-#result button{padding:14px 25px;border:0;border-radius:8px;font-weight:bold}
-@media(max-width:700px){
-  .game{padding:12px 10px}
-  .tug{height:130px}
-  .person{transform:scale(.78)!important}
-  .person.left{margin-right:150px}
-  .person.right{margin-left:150px}
-  .rope{width:180px}
-  .teams{grid-template-columns:1fr;gap:12px}
-  .title{font-size:30px}
-  .subtitle{font-size:14px}
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tarik Tambang Quiz</title>
+  <style>
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #eaf7ff 0%, #fff 55%, #e9f7e4 100%);
+      color: #202020
+    }
+
+    button,
+    input {
+      font: inherit
+    }
+
+    .hidden {
+      display: none !important
+    }
+
+    .setup-wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px
+    }
+
+    .setup-card {
+      width: min(520px, 100%);
+      background: #fff;
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: 0 12px 40px #0002;
+      text-align: center
+    }
+
+    .setup-card h1 {
+      margin: 0 0 8px;
+      font-size: 30px
+    }
+
+    .setup-card p {
+      color: #666;
+      line-height: 1.5
+    }
+
+    .setup-card input {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #d8d8d8;
+      border-radius: 13px;
+      outline: none;
+      margin: 10px 0
+    }
+
+    .setup-card input:focus {
+      border-color: #2563eb
+    }
+
+    .primary {
+      width: 100%;
+      border: 0;
+      border-radius: 13px;
+      padding: 15px;
+      background: #1f2937;
+      color: #fff;
+      font-weight: 800;
+      cursor: pointer
+    }
+
+    .error {
+      color: #c62828;
+      font-weight: bold;
+      margin-top: 12px;
+      line-height: 1.4
+    }
+
+    .note {
+      font-size: 13px;
+      text-align: left;
+      background: #f5f7fa;
+      padding: 12px;
+      border-radius: 12px;
+      margin-top: 14px
+    }
+
+    .game {
+      max-width: 1250px;
+      margin: auto;
+      padding: 14px 18px 35px
+    }
+
+    .header {
+      text-align: center
+    }
+
+    .header h1 {
+      font-size: 34px;
+      margin: 5px 0 2px
+    }
+
+    .header p {
+      margin: 0;
+      color: #666;
+      font-weight: bold
+    }
+
+    .arena {
+      position: relative;
+      height: 285px;
+      max-width: 900px;
+      margin: 4px auto 0;
+      overflow: hidden
+    }
+
+    .sky {
+      position: absolute;
+      inset: 0 0 65px;
+      background: linear-gradient(#bfe9ff, #f8fdff);
+      border-radius: 28px 28px 0 0
+    }
+
+    .cloud {
+      position: absolute;
+      background: #fff;
+      border-radius: 50px;
+      opacity: .8
+    }
+
+    .cloud:before,
+    .cloud:after {
+      content: "";
+      position: absolute;
+      background: #fff;
+      border-radius: 50%
+    }
+
+    .cloud {
+      width: 100px;
+      height: 28px
+    }
+
+    .cloud:before {
+      width: 48px;
+      height: 48px;
+      left: 16px;
+      top: -20px
+    }
+
+    .cloud:after {
+      width: 58px;
+      height: 58px;
+      right: 12px;
+      top: -28px
+    }
+
+    .c1 {
+      left: 7%;
+      top: 45px
+    }
+
+    .c2 {
+      right: 8%;
+      top: 75px;
+      transform: scale(.75)
+    }
+
+    .grass {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 76px;
+      background: linear-gradient(#72c45b, #54a948);
+      border-radius: 0 0 28px 28px
+    }
+
+    .center-line {
+      position: absolute;
+      bottom: 62px;
+      left: 50%;
+      height: 110px;
+      border-left: 3px dashed #fff8;
+      transform: translateX(-50%)
+    }
+
+    .rope-line {
+      position: absolute;
+      left: 18%;
+      right: 18%;
+      top: 156px;
+      height: 9px;
+      background: #a66a36;
+      border: 2px solid #704214;
+      border-radius: 10px;
+      box-shadow: 0 2px 3px #0003;
+      transition: .45s
+    }
+
+    .flag {
+      position: absolute;
+      top: 130px;
+      left: 50%;
+      width: 26px;
+      height: 36px;
+      background: #ffd21c;
+      border: 3px solid #b08c00;
+      border-radius: 4px;
+      transform: translateX(-50%);
+      transition: .45s;
+      z-index: 5
+    }
+
+    .flag:before {
+      content: "";
+      position: absolute;
+      height: 47px;
+      border-left: 4px solid #7a5a23;
+      left: 8px;
+      top: 29px
+    }
+
+    .person {
+      position: absolute;
+      top: 76px;
+      width: 175px;
+      height: 145px;
+      transition: .45s;
+      z-index: 4
+    }
+
+    .person.left {
+      left: 7%
+    }
+
+    .person.right {
+      right: 7%
+    }
+
+    .body {
+      position: absolute;
+      width: 70px;
+      height: 72px;
+      border-radius: 22px 22px 12px 12px;
+      top: 49px;
+      border: 3px solid #252525
+    }
+
+    .left .body {
+      background: #1565e8;
+      left: 62px
+    }
+
+    .right .body {
+      background: #e53935;
+      left: 43px
+    }
+
+    .head {
+      position: absolute;
+      width: 57px;
+      height: 57px;
+      background: #f4bb91;
+      border: 3px solid #252525;
+      border-radius: 50%;
+      top: 8px;
+      z-index: 2
+    }
+
+    .left .head {
+      left: 75px
+    }
+
+    .right .head {
+      left: 50px
+    }
+
+    .hair {
+      position: absolute;
+      width: 55px;
+      height: 18px;
+      background: #292929;
+      border-radius: 14px 14px 5px 5px;
+      top: 7px;
+      z-index: 3
+    }
+
+    .left .hair {
+      left: 76px
+    }
+
+    .right .hair {
+      left: 51px
+    }
+
+    .arm {
+      position: absolute;
+      width: 78px;
+      height: 14px;
+      background: #f4bb91;
+      border: 3px solid #252525;
+      border-radius: 12px;
+      top: 69px;
+      z-index: 5
+    }
+
+    .left .arm {
+      left: 98px;
+      transform: rotate(-7deg)
+    }
+
+    .right .arm {
+      left: 4px;
+      transform: rotate(7deg)
+    }
+
+    .hand {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      background: #f4bb91;
+      border: 3px solid #252525;
+      border-radius: 50%;
+      top: 67px;
+      z-index: 6
+    }
+
+    .left .hand {
+      left: 167px
+    }
+
+    .right .hand {
+      left: -2px
+    }
+
+    .leg {
+      position: absolute;
+      width: 17px;
+      height: 55px;
+      background: #263238;
+      border: 3px solid #252525;
+      border-radius: 10px;
+      top: 112px
+    }
+
+    .left .leg1 {
+      left: 76px
+    }
+
+    .left .leg2 {
+      left: 111px
+    }
+
+    .right .leg1 {
+      left: 51px
+    }
+
+    .right .leg2 {
+      left: 86px
+    }
+
+    .shoe {
+      position: absolute;
+      width: 36px;
+      height: 15px;
+      background: #202020;
+      border-radius: 12px;
+      top: 157px
+    }
+
+    .left .shoe1 {
+      left: 64px
+    }
+
+    .left .shoe2 {
+      left: 103px
+    }
+
+    .right .shoe1 {
+      left: 39px
+    }
+
+    .right .shoe2 {
+      left: 78px
+    }
+
+    .left {
+      transform: scaleX(-1)
+    }
+
+    .right {
+      transform: scaleX(1)
+    }
+
+    .teams {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      max-width: 1200px;
+      margin: auto
+    }
+
+    .panel {
+      background: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 14px #0002;
+      border: 1px solid #ddd
+    }
+
+    .panel-head {
+      padding: 16px 15px;
+      color: #fff;
+      font-weight: 900;
+      font-size: 16px
+    }
+
+    .blue {
+      background: #073c99
+    }
+
+    .red {
+      background: #c5000b
+    }
+
+    .question {
+      padding: 16px 15px;
+      min-height: 74px;
+      font-weight: 800;
+      line-height: 1.4
+    }
+
+    .answers {
+      padding: 9px;
+      background: #f8f8f8
+    }
+
+    .answer {
+      display: block;
+      width: 100%;
+      min-height: 46px;
+      text-align: left;
+      border: 1px solid #ddd;
+      background: #fff;
+      padding: 12px 14px;
+      margin-bottom: 5px;
+      cursor: pointer;
+      border-radius: 3px;
+      transition: .15s
+    }
+
+    .answer:hover {
+      background: #f0f0f0
+    }
+
+    .answer.correct {
+      background: #43a047 !important;
+      color: #fff;
+      border-color: #2e7d32
+    }
+
+    .answer.wrong {
+      background: #e53935 !important;
+      color: #fff;
+      border-color: #c62828
+    }
+
+    .status {
+      text-align: center;
+      font-weight: 800;
+      min-height: 25px;
+      margin: 14px 0
+    }
+
+    .reset {
+      display: block;
+      margin: 0 auto;
+      border: 0;
+      background: #222;
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 9px;
+      cursor: pointer
+    }
+
+    @media(max-width:760px) {
+      .game {
+        padding: 10px
+      }
+
+      .teams {
+        grid-template-columns: 1fr;
+        gap: 12px
+      }
+
+      .arena {
+        height: 245px
+      }
+
+      .person {
+        transform: scale(.72)
+      }
+
+      .person.left {
+        left: -1%
+      }
+
+      .person.right {
+        right: -1%
+      }
+
+      .rope-line {
+        left: 15%;
+        right: 15%
+      }
+
+      .header h1 {
+        font-size: 27px
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<div class="game">
-
-<div id="loading">⏳ Memuat soal dari Google Sheets...</div>
-<div id="error"></div>
-
-<div id="gameArea" style="display:none">
-
-<div class="top">
-  <div class="tug">
-    <div class="rope"></div>
-    <div class="knot" id="knot"></div>
-
-    <div class="person left">
-      <div class="head"></div><div class="hair"></div>
-      <div class="body"></div>
-      <div class="leg l"></div><div class="leg r"></div>
-    </div>
-
-    <div class="person right">
-      <div class="head"></div><div class="hair"></div>
-      <div class="body"></div>
-      <div class="leg l"></div><div class="leg r"></div>
+  <div id="setup" class="setup-wrap">
+    <div class="setup-card">
+      <div style="font-size:60px">🪢</div>
+      <h1>Game Tarik Tambang</h1>
+      <p>Masukkan link Google Sheets berisi soal. Setelah berhasil, halaman ini otomatis masuk ke permainan.</p>
+      <input id="sheetUrl" type="url" placeholder="Tempel link Google Sheets di sini">
+      <button class="primary" id="connectBtn" onclick="connectSheet()">📥 HUBUNGKAN SOAL</button>
+      <div id="error" class="error"></div>
+      <div class="note">
+        <b>Format Sheet:</b><br>
+        A = Pertanyaan<br>
+        B = Jawaban Benar<br>
+        C = Jawaban Salah 1<br>
+        D = Jawaban Salah 2<br>
+        E = Jawaban Salah 3<br><br>
+        <b>Penting:</b> Google Sheets → Bagikan → Akses umum → Siapa saja yang memiliki link → Pelihat.
+      </div>
     </div>
   </div>
 
-  <div class="instruction">Jawab soal untuk menarik tali!</div>
-</div>
+  <div id="game" class="game hidden">
+    <div class="header">
+      <h1>🪢 TARIK TAMBANG</h1>
+      <p>Jawab soal untuk menarik tali!</p>
+    </div>
 
-<div class="teams">
+    <div class="arena">
+      <div class="sky"></div>
+      <div class="cloud c1"></div>
+      <div class="cloud c2"></div>
+      <div class="grass"></div>
+      <div class="center-line"></div>
+      <div class="rope-line" id="rope"></div>
+      <div class="flag" id="flag"></div>
 
-  <div class="team">
-    <div class="teamTitle blueTitle">TIM BIRU</div>
-    <div class="question blueQ" id="questionBlue"></div>
-    <div class="answers" id="answersBlue"></div>
+      <div class="person left" id="bluePerson">
+        <div class="head"></div>
+        <div class="hair"></div>
+        <div class="body"></div>
+        <div class="arm"></div>
+        <div class="hand"></div>
+        <div class="leg leg1"></div>
+        <div class="leg leg2"></div>
+        <div class="shoe shoe1"></div>
+        <div class="shoe shoe2"></div>
+      </div>
+      <div class="person right" id="redPerson">
+        <div class="head"></div>
+        <div class="hair"></div>
+        <div class="body"></div>
+        <div class="arm"></div>
+        <div class="hand"></div>
+        <div class="leg leg1"></div>
+        <div class="leg leg2"></div>
+        <div class="shoe shoe1"></div>
+        <div class="shoe shoe2"></div>
+      </div>
+    </div>
+
+    <div class="teams">
+      <div class="panel">
+        <div class="panel-head blue">TIM BIRU</div>
+        <div class="question" id="qBlue"></div>
+        <div class="answers" id="aBlue"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head red">TIM MERAH</div>
+        <div class="question" id="qRed"></div>
+        <div class="answers" id="aRed"></div>
+      </div>
+    </div>
+
+    <div class="status" id="status"></div>
+    <button class="reset" onclick="location.reload()">🔄 Ganti Link / Mulai Ulang</button>
   </div>
 
-  <div class="team">
-    <div class="teamTitle redTitle">TIM MERAH</div>
-    <div class="question redQ" id="questionRed"></div>
-    <div class="answers" id="answersRed"></div>
+  <div id="result" class="setup-wrap hidden" style="position:fixed;inset:0;background:#000b;z-index:30">
+    <div class="setup-card">
+      <div id="winnerIcon" style="font-size:70px">🏆</div>
+      <h1 id="winner"></h1>
+      <button class="primary" onclick="location.reload()">🔄 MAIN LAGI</button>
+    </div>
   </div>
 
-</div>
+  <script>
+    let questions = [], current = 0, ropePos = 0, locked = false;
+    const WIN = 6;
 
-<div class="status" id="status"></div>
-<button id="start" onclick="startGame()">▶ MULAI</button>
-
-<div class="title">
-  <span class="yellow">GAME</span>
-  <span class="white"> TARIK TAMBANG</span>
-</div>
-<div class="subtitle">Cara mudah membuat game interaktif tarik tambang</div>
-
-</div>
-</div>
-
-<div id="result">
-  <h2 id="winner"></h2>
-  <p>Permainan selesai!</p>
-  <button onclick="location.reload()">🔄 MAIN LAGI</button>
-</div>
-
-<script>
-const SHEET_ID="1bjO7_rm4hc14hFFyk_-CY3BXTWKsoklt93DdNsaPP3s";
-const SHEET_GID="0";
-
-let questions=[];
-let current=0;
-let ropePosition=0;
-let playing=false;
-const WIN=6;
-
-function shuffle(a){
-  a=[...a];
-  for(let i=a.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [a[i],a[j]]=[a[j],a[i]];
-  }
-  return a;
-}
-
-function cell(row,i){
-  return row.c[i] && row.c[i].v!=null ? String(row.c[i].v).trim() : "";
-}
-
-async function loadQuestions(){
-  try{
-    const url=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${SHEET_GID}`;
-    const r=await fetch(url);
-    if(!r.ok) throw Error("Google Sheets tidak dapat diakses.");
-    const text=await r.text();
-    const data=JSON.parse(text.slice(text.indexOf("{"),text.lastIndexOf("}")+1));
-
-    (data.table.rows||[]).forEach(row=>{
-      const q=cell(row,0);
-      const benar=cell(row,1);
-      const salah1=cell(row,2);
-      const salah2=cell(row,3);
-      const salah3=cell(row,4);
-
-      if(q&&benar&&salah1&&salah2&&salah3){
-        questions.push({
-          q:q,
-          answers:shuffle([
-            {text:benar,correct:true},
-            {text:salah1,correct:false},
-            {text:salah2,correct:false},
-            {text:salah3,correct:false}
-          ])
+    function shuffle(a) {
+      a = [...a];
+      for (let i = a.length - 1; i > 0; i--) {let j = Math.floor(Math.random() * (i + 1));[a[i], a[j]] = [a[j], a[i]]}
+      return a;
+    }
+    function getCell(row, i) {
+      return row.c[i] && row.c[i].v != null ? String(row.c[i].v).trim() : "";
+    }
+    function getSheetInfo(url) {
+      const m = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+      if (!m) throw Error("Link Google Sheets tidak valid.");
+      const gid = (url.match(/[?#&]gid=([0-9]+)/) || [])[1] || "0";
+      return {id: m[1], gid};
+    }
+    async function connectSheet() {
+      const btn = document.getElementById("connectBtn"), err = document.getElementById("error");
+      err.textContent = "";
+      try {
+        const {id, gid} = getSheetInfo(document.getElementById("sheetUrl").value.trim());
+        btn.disabled = true; btn.textContent = "⏳ MEMUAT SOAL...";
+        const url = `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:json&gid=${gid}`;
+        const r = await fetch(url);
+        if (!r.ok) throw Error("Google Sheets tidak bisa diakses.");
+        const text = await r.text(), s = text.indexOf("{"), e = text.lastIndexOf("}");
+        const data = JSON.parse(text.slice(s, e + 1));
+        questions = [];
+        (data.table.rows || []).forEach(row => {
+          const q = getCell(row, 0), good = getCell(row, 1), w1 = getCell(row, 2), w2 = getCell(row, 3), w3 = getCell(row, 4);
+          if (q && good && w1 && w2 && w3) {
+            questions.push({
+              q, answers: shuffle([
+                {t: good, c: true}, {t: w1, c: false}, {t: w2, c: false}, {t: w3, c: false}
+              ])
+            });
+          }
         });
+        if (!questions.length) throw Error("Soal tidak ditemukan. Pastikan kolom A-E terisi mulai baris 2.");
+        document.getElementById("setup").classList.add("hidden");
+        document.getElementById("game").classList.remove("hidden");
+        showQuestion();
+      } catch (x) {
+        err.textContent = "❌ " + x.message + " Pastikan akses Sheet adalah 'Siapa saja yang memiliki link → Pelihat'.";
+      } finally {btn.disabled = false; btn.textContent = "📥 HUBUNGKAN SOAL"}
+    }
+    function showQuestion() {
+      locked = false;
+      const q = questions[current % questions.length];
+      document.getElementById("qBlue").textContent = q.q;
+      document.getElementById("qRed").textContent = q.q;
+      makeAnswers("aBlue", q); makeAnswers("aRed", q);
+      document.getElementById("status").textContent = `Soal ${current + 1} • Tarik sampai penanda mencapai salah satu sisi!`;
+    }
+    function makeAnswers(id, q) {
+      const box = document.getElementById(id); box.innerHTML = "";
+      q.answers.forEach((a, i) => {
+        const b = document.createElement("button"); b.className = "answer"; b.textContent = a.t;
+        b.onclick = () => answer(a, b, box); box.appendChild(b);
+      });
+    }
+    function answer(a, button, box) {
+      if (locked) return; locked = true;
+      const q = questions[current % questions.length];
+      box.querySelectorAll(".answer").forEach(b => b.disabled = true);
+      if (a.c) {button.classList.add("correct"); ropePos--; document.getElementById("status").textContent = "✅ BENAR! Tim Biru menarik tali!";}
+      else {
+        button.classList.add("wrong"); ropePos++; document.getElementById("status").textContent = "❌ SALAH! Tim Merah menarik tali!";
+        [...box.querySelectorAll(".answer")].forEach((b, i) => {if (q.answers[i].c) b.classList.add("correct")});
       }
-    });
-
-    if(!questions.length) throw Error("Tidak ada soal valid di kolom A-E.");
-
-    document.getElementById("loading").style.display="none";
-    document.getElementById("gameArea").style.display="block";
-    document.getElementById("status").textContent=`${questions.length} soal siap.`;
-    setTimeout(startGame,400);
-  }catch(e){
-    document.getElementById("loading").textContent="❌ Gagal memuat soal";
-    document.getElementById("error").textContent=e.message+" Pastikan Google Sheets dapat dilihat oleh siapa saja yang memiliki link.";
-  }
-}
-
-function startGame(){
-  if(!questions.length)return;
-  current=0;
-  ropePosition=0;
-  playing=true;
-  document.getElementById("start").style.display="none";
-  showQuestion();
-  moveRope();
-}
-
-function showQuestion(){
-  const q=questions[current%questions.length];
-  document.getElementById("questionBlue").textContent=q.q;
-  document.getElementById("questionRed").textContent=q.q;
-
-  makeAnswers("answersBlue",q);
-  makeAnswers("answersRed",q);
-}
-
-function makeAnswers(id,q){
-  const box=document.getElementById(id);
-  box.innerHTML="";
-  q.answers.forEach((a,i)=>{
-    const b=document.createElement("button");
-    b.className="answer";
-    b.textContent=a.text;
-    b.onclick=()=>answer(a,b,box);
-    box.appendChild(b);
-  });
-}
-
-function answer(a,button,box){
-  if(!playing)return;
-
-  const all=box.querySelectorAll(".answer");
-  all.forEach(x=>x.disabled=true);
-
-  if(a.correct){
-    button.classList.add("correct");
-    ropePosition--;
-    document.getElementById("status").textContent="✅ Benar! Tali tertarik ke Tim Biru.";
-  }else{
-    button.classList.add("wrong");
-    ropePosition++;
-    document.getElementById("status").textContent="❌ Salah! Tali tertarik ke Tim Merah.";
-    [...all].forEach((x,i)=>{
-      if(questions[current%questions.length].answers[i].correct)
-        x.classList.add("correct");
-    });
-  }
-
-  moveRope();
-
-  if(ropePosition<=-WIN){
-    return setTimeout(()=>finish("🔵 TIM BIRU MENANG!"),700);
-  }
-  if(ropePosition>=WIN){
-    return setTimeout(()=>finish("🔴 TIM MERAH MENANG!"),700);
-  }
-
-  current++;
-  setTimeout(showQuestion,850);
-}
-
-function moveRope(){
-  const px=ropePosition*24;
-  document.getElementById("knot").style.transform=`translateX(${px}px)`;
-}
-
-function finish(text){
-  playing=false;
-  document.getElementById("winner").textContent=text;
-  document.getElementById("result").style.display="flex";
-}
-
-loadQuestions();
-</script>
+      moveRope();
+      if (ropePos <= -WIN) return setTimeout(() => finish("🔵 TIM BIRU MENANG!"), 650);
+      if (ropePos >= WIN) return setTimeout(() => finish("🔴 TIM MERAH MENANG!"), 650);
+      current++; setTimeout(showQuestion, 750);
+    }
+    function moveRope() {
+      const x = ropePos * 28;
+      document.getElementById("rope").style.transform = `translateX(${x}px)`;
+      document.getElementById("flag").style.transform = `translateX(calc(-50% + ${x}px))`;
+      document.getElementById("bluePerson").style.transform = `scaleX(-1) translateX(${Math.max(0, -ropePos) * 2}px)`;
+      document.getElementById("redPerson").style.transform = `translateX(${Math.max(0, ropePos) * 2}px)`;
+    }
+    function finish(text) {
+      document.getElementById("winner").textContent = text;
+      document.getElementById("result").classList.remove("hidden");
+    }
+  </script>
 </body>
+
 </html>
