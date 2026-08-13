@@ -231,7 +231,7 @@
         .team {
             position: absolute;
             top: 0;
-            width: 45%;
+            width: 49%;
             height: 270px;
             display: flex;
             align-items: flex-end;
@@ -248,9 +248,9 @@
         }
 
         .person {
-            width: 50%;
-            max-width: 245px;
-            min-width: 125px;
+            width: 33.333%;
+            max-width: 190px;
+            min-width: 100px;
             position: relative;
             z-index: 3;
             transition: transform .55s cubic-bezier(.18, .82, .22, 1);
@@ -393,23 +393,31 @@
         }
 
         .pullBlue {
-            animation: pullBlue .62s
+            animation: pullBlue .72s
         }
 
         .pullRed {
-            animation: pullRed .62s
+            animation: pullRed .72s
         }
 
         .beingPulled {
-            animation: beingPulled .62s
+            animation: beingPulled .72s
         }
 
         .ropeTug {
-            animation: ropeTug .62s
+            animation: ropeTug .72s
         }
 
         .handTug {
             animation: handTug .3s ease-in-out 2 alternate
+        }
+
+        .recoil {
+            animation: recoil .72s
+        }
+
+        .footKick {
+            animation: footKick .72s
         }
 
         @keyframes pullBlue {
@@ -445,12 +453,22 @@
         }
 
         @keyframes beingPulled {
-            35% {
-                transform: translate(0, 7px) rotate(2deg)
+
+            0%,
+            100% {
+                transform: translate(0, 0) rotate(0)
             }
 
-            65% {
-                transform: translate(0, -2px)
+            25% {
+                transform: translate(-8px, 5px) rotate(-2deg)
+            }
+
+            50% {
+                transform: translate(10px, 10px) rotate(4deg)
+            }
+
+            72% {
+                transform: translate(2px, -2px) rotate(1deg)
             }
         }
 
@@ -467,6 +485,38 @@
         @keyframes handTug {
             to {
                 transform: translate(8px, 3px)
+            }
+        }
+
+        @keyframes recoil {
+
+            0%,
+            100% {
+                filter: none
+            }
+
+            35% {
+                filter: brightness(1.06)
+            }
+
+            60% {
+                filter: brightness(.98)
+            }
+        }
+
+        @keyframes footKick {
+
+            0%,
+            100% {
+                transform: translateY(0)
+            }
+
+            45% {
+                transform: translateY(6px)
+            }
+
+            70% {
+                transform: translateY(-1px)
             }
         }
 
@@ -772,7 +822,7 @@
     </section>
 
     <script>
-        let questions = [], index = 0, position = 0, blueScore = 0, redScore = 0, locked = false;
+        let questions = [], index = 0, position = 0, blueScore = 0, redScore = 0, locked = false, blueQuestion = null, redQuestion = null;
         const shuffle = a => {a = [...a]; for (let i = a.length - 1; i > 0; i--) {let j = Math.floor(Math.random() * (i + 1));[a[i], a[j]] = [a[j], a[i]]} return a};
         function getSheetId(url) {
             const m = url.match(/\/spreadsheets\/d\/([A-Za-z0-9_-]+)/);
@@ -800,8 +850,8 @@
             } catch (e) {err.textContent = "❌ " + e.message + " Pastikan Sheet dapat dilihat publik."}
         }
         function createPeople() {
-            document.getElementById("leftTeam").innerHTML = makePerson("blue", 0) + makePerson("blue", 1);
-            document.getElementById("rightTeam").innerHTML = makePerson("red", 0) + makePerson("red", 1);
+            document.getElementById("leftTeam").innerHTML = makePerson("blue", 0) + makePerson("blue", 1) + makePerson("blue", 2);
+            document.getElementById("rightTeam").innerHTML = makePerson("red", 0) + makePerson("red", 1) + makePerson("red", 2);
         }
         function makePerson(color, n) {
             const shirt = color === "blue" ? "blueShirt" : "redShirt";
