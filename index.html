@@ -1,874 +1,671 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Game Tarik Tambang Quiz</title>
-    <style>
-        * {
-            box-sizing: border-box
-        }
-
-        body {
-            margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
-            background: #eef8ff;
-            color: #17202a
-        }
-
-        button,
-        input {
-            font: inherit
-        }
-
-        .hidden {
-            display: none !important
-        }
-
-        #setup {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            background: linear-gradient(#78d0ff, #dff6ff 58%, #77c957 58%)
-        }
-
-        .setupBox {
-            width: min(560px, 100%);
-            background: #fff;
-            border-radius: 22px;
-            padding: 25px;
-            box-shadow: 0 12px 35px #0004;
-            text-align: center
-        }
-
-        .setupBox h1 {
-            margin: 0 0 8px;
-            font-size: 30px
-        }
-
-        .setupBox input {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #c9c9c9;
-            border-radius: 12px;
-            margin: 12px 0
-        }
-
-        .start {
-            width: 100%;
-            padding: 14px;
-            border: 0;
-            border-radius: 12px;
-            background: #25a843;
-            color: #fff;
-            font-weight: 900;
-            cursor: pointer
-        }
-
-        #error {
-            color: #d22;
-            font-weight: bold;
-            margin-top: 9px
-        }
-
-        .hint {
-            font-size: 13px;
-            color: #666;
-            margin-top: 12px;
-            text-align: left;
-            line-height: 1.5
-        }
-
-        #app {
-            min-height: 100vh;
-            background: linear-gradient(#67c8f6 0 48%, #7bc958 48%);
-            overflow: hidden
-        }
-
-        .page {
-            max-width: 1450px;
-            margin: auto;
-            padding: 12px 18px 25px
-        }
-
-        .topbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center
-        }
-
-        .smallBtn,
-        .score {
-            background: #073968;
-            color: white;
-            border: 0;
-            border-radius: 13px;
-            padding: 11px 18px;
-            font-weight: 900;
-            box-shadow: 0 4px 0 #042643
-        }
-
-        .score {
-            font-size: 18px
-        }
-
-        .logo {
-            text-align: center;
-            margin-top: -4px;
-            position: relative;
-            z-index: 2
-        }
-
-        .logo .game {
-            font-size: clamp(35px, 5vw, 64px);
-            font-weight: 1000;
-            color: #fff;
-            text-shadow: 4px 4px #14365a
-        }
-
-        .logo .title {
-            font-size: clamp(42px, 6vw, 78px);
-            font-weight: 1000;
-            color: #ffd21b;
-            -webkit-text-stroke: 2px #18334e;
-            text-shadow: 4px 5px #18334e
-        }
-
-        .logo .quiz {
-            display: inline-block;
-            background: #df3025;
-            color: #fff;
-            padding: 6px 75px;
-            border-radius: 8px;
-            font-size: 30px;
-            font-weight: 1000;
-            box-shadow: 0 5px #8c1a13;
-            margin-top: -8px
-        }
-
-        .scene {
-            height: 400px;
-            position: relative;
-            margin-top: -3px
-        }
-
-        .skyline {
-            position: absolute;
-            inset: 0 0 80px;
-            background: linear-gradient(#69c9f6, #dff7ff)
-        }
-
-        .cloud {
-            position: absolute;
-            width: 110px;
-            height: 30px;
-            background: #fff;
-            border-radius: 30px;
-            opacity: .85
-        }
-
-        .cloud:before,
-        .cloud:after {
-            content: "";
-            position: absolute;
-            background: #fff;
-            border-radius: 50%
-        }
-
-        .cloud:before {
-            width: 50px;
-            height: 50px;
-            left: 15px;
-            top: -23px
-        }
-
-        .cloud:after {
-            width: 55px;
-            height: 55px;
-            right: 12px;
-            top: -29px
-        }
-
-        .c1 {
-            left: 9%;
-            top: 45px
-        }
-
-        .c2 {
-            right: 9%;
-            top: 75px
-        }
-
-        .field {
-            position: absolute;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            height: 105px;
-            background: linear-gradient(#76ca54, #4e9e3f);
-            border-radius: 50% 50% 0 0/30% 30% 0 0
-        }
-
-        .centerline {
-            position: absolute;
-            top: 125px;
-            bottom: 40px;
-            left: 50%;
-            border-left: 3px dashed #fff9
-        }
-
-        .tugArea {
-            position: absolute;
-            left: 3%;
-            right: 3%;
-            top: 100px;
-            height: 270px
-        }
-
-        .team {
-            position: absolute;
-            top: 0;
-            width: 45%;
-            height: 270px;
-            display: flex;
-            align-items: flex-end;
-            gap: 0
-        }
-
-        .leftTeam {
-            left: 0
-        }
-
-        .rightTeam {
-            right: 0;
-            flex-direction: row-reverse
-        }
-
-        .person {
-            width: 50%;
-            max-width: 245px;
-            min-width: 125px;
-            position: relative;
-            z-index: 3;
-            transition: transform .55s cubic-bezier(.18, .82, .22, 1);
-            transform-origin: 50% 90%
-        }
-
-        .person svg {
-            width: 100%;
-            height: auto;
-            display: block;
-            overflow: visible
-        }
-
-        .edge {
-            stroke: #202020;
-            stroke-width: 3;
-            stroke-linecap: round;
-            stroke-linejoin: round
-        }
-
-        .skin {
-            fill: #f1b08a
-        }
-
-        .hair {
-            fill: #171717
-        }
-
-        .shorts {
-            fill: #292929
-        }
-
-        .shoe {
-            fill: #1d252c
-        }
-
-        .blueShirt {
-            fill: #1672df
-        }
-
-        .redShirt {
-            fill: #df3030
-        }
-
-        .face .eye {
-            fill: #151515
-        }
-
-        .face .mouth {
-            fill: none;
-            stroke: #7e2828;
-            stroke-width: 4;
-            stroke-linecap: round
-        }
-
-        .person.happy .mouth {
-            d: path("M0 0 Q12 13 24 0")
-        }
-
-        .person.angry .mouth {
-            d: path("M0 10 Q12 0 24 10")
-        }
-
-        .person.happy .browL {
-            transform: rotate(-12deg)
-        }
-
-        .person.happy .browR {
-            transform: rotate(12deg)
-        }
-
-        .person.angry .browL {
-            transform: rotate(24deg)
-        }
-
-        .person.angry .browR {
-            transform: rotate(-24deg)
-        }
-
-        .ropeBox {
-            position: absolute;
-            z-index: 6;
-            left: 7%;
-            right: 7%;
-            top: 128px;
-            height: 85px;
-            pointer-events: none;
-            transition: transform .55s
-        }
-
-        .ropeBox svg {
-            width: 100%;
-            height: 100%;
-            overflow: visible
-        }
-
-        .ropeShadow {
-            fill: none;
-            stroke: #0003;
-            stroke-width: 16;
-            stroke-linecap: round
-        }
-
-        .rope {
-            fill: none;
-            stroke: #76502d;
-            stroke-width: 10;
-            stroke-linecap: round
-        }
-
-        .ropeLight {
-            fill: none;
-            stroke: #c18a4d;
-            stroke-width: 3;
-            stroke-dasharray: 9 8;
-            stroke-linecap: round
-        }
-
-        .flag {
-            position: absolute;
-            z-index: 9;
-            left: 50%;
-            top: 126px;
-            width: 26px;
-            height: 48px;
-            background: #ffd31b;
-            border: 3px solid #9d7800;
-            border-radius: 4px;
-            transform: translateX(-50%);
-            transition: transform .55s
-        }
-
-        .flag:after {
-            content: "";
-            position: absolute;
-            left: 9px;
-            top: 44px;
-            height: 45px;
-            border-left: 4px solid #6d4a27
-        }
-
-        .pullBlue {
-            animation: pullBlue .62s
-        }
-
-        .pullRed {
-            animation: pullRed .62s
-        }
-
-        .beingPulled {
-            animation: beingPulled .62s
-        }
-
-        .ropeTug {
-            animation: ropeTug .62s
-        }
-
-        .handTug {
-            animation: handTug .3s ease-in-out 2 alternate
-        }
-
-        @keyframes pullBlue {
-
-            0%,
-            100% {
-                transform: translate(0, 0)
-            }
-
-            35% {
-                transform: translate(-18px, 10px) rotate(-4deg)
-            }
-
-            65% {
-                transform: translate(6px, -2px) rotate(1deg)
-            }
-        }
-
-        @keyframes pullRed {
-
-            0%,
-            100% {
-                transform: translate(0, 0)
-            }
-
-            35% {
-                transform: translate(18px, 10px) rotate(4deg)
-            }
-
-            65% {
-                transform: translate(-6px, -2px) rotate(-1deg)
-            }
-        }
-
-        @keyframes beingPulled {
-            35% {
-                transform: translate(0, 7px) rotate(2deg)
-            }
-
-            65% {
-                transform: translate(0, -2px)
-            }
-        }
-
-        @keyframes ropeTug {
-            35% {
-                transform: scaleY(1.1)
-            }
-
-            65% {
-                transform: scaleY(.97)
-            }
-        }
-
-        @keyframes handTug {
-            to {
-                transform: translate(8px, 3px)
-            }
-        }
-
-        .dust {
-            position: absolute;
-            width: 11px;
-            height: 11px;
-            border-radius: 50%;
-            background: #d8c59b;
-            opacity: 0;
-            z-index: 2
-        }
-
-        .dust.show {
-            animation: dust .6s ease-out
-        }
-
-        @keyframes dust {
-            0% {
-                opacity: .85;
-                transform: translate(0, 0) scale(.5)
-            }
-
-            100% {
-                opacity: 0;
-                transform: translate(0, -35px) scale(2)
-            }
-        }
-
-        .questions {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px
-        }
-
-        .panel {
-            background: #fff;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 7px 18px #0003
-        }
-
-        .panelTitle {
-            padding: 14px;
-            text-align: center;
-            color: #fff;
-            font-size: 24px;
-            font-weight: 1000
-        }
-
-        .blueTitle {
-            background: #075ed2
-        }
-
-        .redTitle {
-            background: #d92121
-        }
-
-        .question {
-            padding: 15px;
-            text-align: center;
-            font-weight: 900;
-            min-height: 62px;
-            font-size: 18px
-        }
-
-        .answers {
-            padding: 10px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 9px;
-            background: #f6f6f6
-        }
-
-        .answer {
-            border: 1px solid #ccc;
-            background: #fff;
-            border-radius: 6px;
-            padding: 13px;
-            text-align: left;
-            cursor: pointer;
-            min-height: 48px;
-            font-weight: 700
-        }
-
-        .answer:hover {
-            background: #eef5ff
-        }
-
-        .answer.correct {
-            background: #36a852;
-            color: white
-        }
-
-        .answer.wrong {
-            background: #e33b3b;
-            color: white
-        }
-
-        .status {
-            text-align: center;
-            font-weight: 1000;
-            font-size: 18px;
-            padding: 13px;
-            min-height: 25px
-        }
-
-        .bottom {
-            display: flex;
-            justify-content: space-between;
-            gap: 10px
-        }
-
-        .bottom button {
-            border: 0;
-            background: #073968;
-            color: white;
-            padding: 10px 16px;
-            border-radius: 10px;
-            font-weight: 900
-        }
-
-        @media(max-width:800px) {
-            .page {
-                padding: 9px
-            }
-
-            .logo .quiz {
-                padding: 5px 40px;
-                font-size: 22px
-            }
-
-            .scene {
-                height: 300px
-            }
-
-            .tugArea {
-                top: 75px;
-                height: 210px
-            }
-
-            .ropeBox {
-                top: 98px
-            }
-
-            .flag {
-                top: 96px
-            }
-
-            .team {
-                height: 210px
-            }
-
-            .person {
-                min-width: 88px
-            }
-
-            .questions {
-                grid-template-columns: 1fr
-            }
-
-            .answers {
-                grid-template-columns: 1fr 1fr
-            }
-        }
-
-        @media(max-width:500px) {
-            .topbar .smallBtn {
-                font-size: 12px;
-                padding: 9px
-            }
-
-            .score {
-                font-size: 13px;
-                padding: 9px
-            }
-
-            .logo .game {
-                font-size: 31px
-            }
-
-            .logo .title {
-                font-size: 40px
-            }
-
-            .logo .quiz {
-                font-size: 18px;
-                padding: 4px 28px
-            }
-
-            .scene {
-                height: 255px
-            }
-
-            .tugArea {
-                top: 67px;
-                height: 175px
-            }
-
-            .ropeBox {
-                top: 83px
-            }
-
-            .flag {
-                top: 82px
-            }
-
-            .team {
-                height: 175px
-            }
-
-            .person {
-                min-width: 67px
-            }
-
-            .questions {
-                gap: 12px
-            }
-
-            .answers {
-                grid-template-columns: 1fr
-            }
-
-            .panelTitle {
-                font-size: 20px
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tarik Tambang - Quiz</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(#87ceeb, #eefaff);
+      min-height: 100vh
+    }
+
+    .game {
+      width: 100%;
+      max-width: 680px;
+      margin: auto;
+      padding: 14px
+    }
+
+    h1 {
+      text-align: center;
+      margin: 4px 0 14px;
+      font-size: 28px
+    }
+
+    .panel,
+    .questionBox {
+      background: #fff;
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 5px 18px #0002
+    }
+
+    .setupText {
+      font-size: 14px;
+      line-height: 1.55;
+      color: #555
+    }
+
+    #loading {
+      text-align: center;
+      font-weight: bold;
+      margin: 12px 0
+    }
+
+    #error {
+      color: #c62828;
+      font-weight: bold;
+      margin-top: 10px;
+      line-height: 1.4
+    }
+
+    #gameArea {
+      display: none
+    }
+
+    .score {
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+      margin: 8px 2px 10px
+    }
+
+    .blueText {
+      color: #1769ff
+    }
+
+    .redText {
+      color: #e53935
+    }
+
+    .arena {
+      position: relative;
+      height: 240px;
+      background: #80c95a;
+      border: 4px solid #333;
+      border-radius: 20px;
+      overflow: hidden
+    }
+
+    .ground {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 48px;
+      background: #795548
+    }
+
+    .character {
+      position: absolute;
+      bottom: 40px;
+      font-size: 64px;
+      transition: .4s
+    }
+
+    .blue {
+      left: 7px
+    }
+
+    .red {
+      right: 7px;
+      transform: scaleX(-1)
+    }
+
+    .rope {
+      position: absolute;
+      top: 130px;
+      left: 10%;
+      width: 80%;
+      height: 10px;
+      background: #c49a6c;
+      border: 2px solid #704214;
+      border-radius: 10px;
+      transition: .4s
+    }
+
+    .flag {
+      position: absolute;
+      top: 87px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 38px;
+      transition: .4s
+    }
+
+    #status {
+      text-align: center;
+      font-weight: bold;
+      margin: 10px 0
+    }
+
+    #question {
+      text-align: center;
+      font-size: 21px;
+      font-weight: bold;
+      line-height: 1.4;
+      min-height: 58px
+    }
+
+    .answers {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px
+    }
+
+    .answer {
+      background: #eee;
+      width: 100%;
+      min-height: 58px
+    }
+
+    .answer:active {
+      transform: scale(.97)
+    }
+
+    .correct {
+      background: #4caf50 !important;
+      color: #fff
+    }
+
+    .wrong {
+      background: #f44336 !important;
+      color: #fff
+    }
+
+    #message {
+      text-align: center;
+      font-weight: bold;
+      min-height: 24px;
+      margin: 10px 0
+    }
+
+    #result {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #000c;
+      z-index: 10;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      color: #fff;
+      text-align: center;
+      padding: 20px
+    }
+
+    #result h2 {
+      font-size: 34px;
+      margin: 10px
+    }
+
+    .resultBtn {
+      background: #fff;
+      color: #111
+    }
+
+    @media(max-width:430px) {
+      .game {
+        padding: 10px
+      }
+
+      .arena {
+        height: 205px
+      }
+
+      .character {
+        font-size: 52px
+      }
+
+      #question {
+        font-size: 18px
+      }
+
+      .answer {
+        font-size: 15px
+      }
+    }
+  </style>
 </head>
 
 <body>
+  <div class="game">
+    <h1>🪢 TARIK TAMBANG 🪢</h1>
 
-    <section id="setup">
-        <div class="setupBox">
-            <div style="font-size:55px">🪢</div>
-            <h1>GAME TARIK TAMBANG QUIZ</h1>
-            <p>Masukkan link Google Sheets untuk mengambil soal.</p>
-            <input id="sheetUrl" placeholder="Tempel link Google Sheets di sini">
-            <button class="start" onclick="connectSheet()">▣ MULAI GAME</button>
-            <div id="error"></div>
-            <div class="hint"><b>Format Google Sheet:</b><br>A = Pertanyaan<br>B = Jawaban Benar<br>C = Jawaban Salah
-                1<br>D = Jawaban Salah 2<br>E = Jawaban Salah 3<br><br>Setel akses menjadi <b>Siapa saja yang memiliki
-                    link → Pelihat</b>.</div>
-        </div>
-    </section>
+    <!--
+  GOOGLE SHEETS KAMU SUDAH DIPASANG OTOMATIS.
+  FORMAT:
+  A = Pertanyaan
+  B = Jawaban Benar
+  C = Jawaban Salah 1
+  D = Jawaban Salah 2
+  E = Jawaban Salah 3
+-->
+    <div id="setup" class="panel">
+      <div class="setupText">
+        <b>📚 Sumber soal:</b> Google Sheets kamu<br><br>
+        A = Pertanyaan<br>
+        B = Jawaban Benar<br>
+        C = Jawaban Salah 1<br>
+        D = Jawaban Salah 2<br>
+        E = Jawaban Salah 3
+      </div>
+      <div id="loading">⏳ Menghubungkan ke Google Sheets...</div>
+      <div id="error"></div>
+    </div>
 
-    <section id="app" class="hidden">
-        <div class="page">
-            <div class="topbar">
-                <button class="smallBtn"
-                    onclick="alert('Jawab soal dengan benar untuk menarik tali ke tim Biru. Jawaban salah membuat Tim Merah menarik.')">❔
-                    PETUNJUK</button>
-                <div class="score">🏆 Skor <span id="score">0 : 0</span></div>
-            </div>
+    <div id="gameArea">
+      <div class="score">
+        <span class="blueText">🔵 TIM BIRU</span>
+        <span class="redText">TIM MERAH 🔴</span>
+      </div>
 
-            <div class="logo">
-                <div class="game">GAME</div>
-                <div class="title">TARIK TAMBANG</div>
-                <div class="quiz">QUIZ</div>
-            </div>
+      <div class="arena">
+        <div class="character blue">🏃</div>
+        <div class="character red">🏃</div>
+        <div class="rope" id="rope"></div>
+        <div class="flag" id="flag">🚩</div>
+        <div class="ground"></div>
+      </div>
 
-            <div class="scene">
-                <div class="skyline"></div>
-                <div class="cloud c1"></div>
-                <div class="cloud c2"></div>
-                <div class="field"></div>
-                <div class="centerline"></div>
-                <div class="tugArea">
-                    <div id="leftTeam" class="team leftTeam"></div>
-                    <div id="rightTeam" class="team rightTeam"></div>
-                </div>
-                <div id="ropeBox" class="ropeBox">
-                    <svg viewBox="0 0 1000 100" preserveAspectRatio="none">
-                        <path id="ropeShadow" class="ropeShadow" d="M0 50 C250 50 750 50 1000 50" />
-                        <path id="rope" class="rope" d="M0 50 C250 50 750 50 1000 50" />
-                        <path id="ropeLight" class="ropeLight" d="M0 47 C250 47 750 47 1000 47" />
-                    </svg>
-                </div>
-                <div id="flag" class="flag"></div>
-                <div class="dust" style="left:13%;bottom:55px"></div>
-                <div class="dust" style="left:25%;bottom:65px"></div>
-                <div class="dust" style="right:13%;bottom:55px"></div>
-                <div class="dust" style="right:25%;bottom:65px"></div>
-            </div>
+      <div id="status"></div>
 
-            <div class="questions">
-                <div class="panel">
-                    <div class="panelTitle blueTitle">TIM BIRU</div>
-                    <div id="qBlue" class="question"></div>
-                    <div id="aBlue" class="answers"></div>
-                </div>
-                <div class="panel">
-                    <div class="panelTitle redTitle">TIM MERAH</div>
-                    <div id="qRed" class="question"></div>
-                    <div id="aRed" class="answers"></div>
-                </div>
-            </div>
+      <div class="questionBox">
+        <div id="question"></div>
+        <div class="answers" id="answers"></div>
+        <div id="message"></div>
+      </div>
+    </div>
+  </div>
 
-            <div id="status" class="status">Jawab soal untuk menarik tali!</div>
-            <div class="bottom"><button onclick="location.reload()">🔄 Reset</button><button
-                    onclick="location.reload()">🔗 Ganti Link</button></div>
-        </div>
-    </section>
+  <div id="result">
+    <h2 id="winner"></h2>
+    <p>Permainan selesai!</p>
+    <button class="resultBtn" onclick="location.reload()">🔄 MAIN LAGI</button>
+  </div>
 
-    <script>
-        let questions = [], index = 0, position = 0, blueScore = 0, redScore = 0, locked = false;
-        const shuffle = a => {a = [...a]; for (let i = a.length - 1; i > 0; i--) {let j = Math.floor(Math.random() * (i + 1));[a[i], a[j]] = [a[j], a[i]]} return a};
-        function getSheetId(url) {
-            const m = url.match(/\/spreadsheets\/d\/([A-Za-z0-9_-]+)/);
-            if (!m) throw new Error("Link Google Sheets tidak valid.");
-            const gid = (url.match(/[?#&]gid=(\d+)/) || [])[1] || "0";
-            return [m[1], gid];
+  <script>
+    /* =========================
+       GOOGLE SHEETS
+       ========================= */
+
+    const SHEET_ID = "1bjO7_rm4hc14hFFyk_-CY3BXTWKsoklt93DdNsaPP3s";
+    const SHEET_GID = "0";
+
+    /*
+       Data Sheet:
+       A = pertanyaan
+       B = benar
+       C = salah 1
+       D = salah 2
+       E = salah 3
+    */
+
+    let questions = [];
+    let currentQuestion = 0;
+    let ropePosition = 0;
+    let gameStarted = false;
+
+    const WIN_POSITION = 6;
+
+    const $ = id => document.getElementById(id);
+
+
+    /* =========================
+       ACAK JAWABAN
+       ========================= */
+
+    function shuffle(array) {
+      const arr = [...array];
+
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+
+      return arr;
+    }
+
+
+    /* =========================
+       AMBIL DATA GOOGLE SHEETS
+       ========================= */
+
+    async function loadQuestions() {
+
+      try {
+
+        const url =
+          `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${SHEET_GID}`;
+
+        const response = await fetch(url);
+
+        if (!response.ok) {
+          throw new Error(
+            "Google Sheets tidak bisa diakses."
+          );
         }
-        async function connectSheet() {
-            const err = document.getElementById("error"); err.textContent = "";
-            try {
-                const [id, gid] = getSheetId(document.getElementById("sheetUrl").value.trim());
-                const res = await fetch(`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:json&gid=${gid}`);
-                if (!res.ok) throw new Error("Google Sheets tidak bisa diakses.");
-                const text = await res.text();
-                const json = JSON.parse(text.slice(text.indexOf("{"), text.lastIndexOf("}") + 1));
-                questions = [];
-                (json.table.rows || []).forEach(row => {
-                    const c = row.c || []; const v = i => c[i]?.v == null ? "" : String(c[i].v).trim();
-                    if (v(0) && v(1) && v(2) && v(3) && v(4)) questions.push({q: v(0), answers: shuffle([{t: v(1), correct: true}, {t: v(2)}, {t: v(3)}, {t: v(4)}])});
-                });
-                if (!questions.length) throw new Error("Soal tidak ditemukan pada kolom A-E.");
-                document.getElementById("setup").classList.add("hidden");
-                document.getElementById("app").classList.remove("hidden");
-                createPeople(); showQuestion();
-            } catch (e) {err.textContent = "❌ " + e.message + " Pastikan Sheet dapat dilihat publik."}
+
+        const text = await response.text();
+
+        const start = text.indexOf("{");
+        const end = text.lastIndexOf("}");
+
+        if (start === -1 || end === -1) {
+          throw new Error(
+            "Format data Google Sheets tidak terbaca."
+          );
         }
-        function createPeople() {
-            document.getElementById("leftTeam").innerHTML = makePerson("blue", 0) + makePerson("blue", 1);
-            document.getElementById("rightTeam").innerHTML = makePerson("red", 0) + makePerson("red", 1);
-        }
-        function makePerson(color, n) {
-            const shirt = color === "blue" ? "blueShirt" : "redShirt";
-            return `<div id="${color}${n}" class="person">
- <svg viewBox="0 0 220 270">
-  <ellipse class="shoe edge" cx="75" cy="246" rx="34" ry="10"/><ellipse class="shoe edge" cx="150" cy="242" rx="34" ry="10"/>
-  <path class="skin edge" d="M68 183 L72 237 L92 237 L100 179Z"/><path class="skin edge" d="M125 180 L142 236 L162 236 L153 174Z"/>
-  <path class="${shirt} edge" d="M61 105 Q109 77 157 105 L164 181 Q111 199 55 177Z"/>
-  <path class="skin edge" d="M72 116 Q39 122 22 146 L31 157 Q55 143 81 137Z"/>
-  <circle class="skin edge hand" cx="28" cy="151" r="12"/>
-  <path class="skin edge" d="M145 118 Q177 126 198 149 L188 159 Q163 145 139 138Z"/>
-  <circle class="skin edge hand" cx="195" cy="153" r="12"/>
-  <circle class="skin edge" cx="111" cy="67" r="42"/>
-  <path class="hair edge" d="M69 68 Q65 21 108 18 Q153 14 158 59 Q140 39 119 42 Q91 45 69 68Z"/>
-  <g class="face"><path class="b1 edge" d="M91 63 L104 59"/><path class="b2 edge" d="M119 59 L133 63"/><circle class="eye" cx="97" cy="73" r="4"/><circle class="eye" cx="127" cy="73" r="4"/><path class="mouth" d="M101 91 Q112 100 124 91"/></g>
- </svg></div>`;
-        }
-        function setFaces(side) {
-            document.querySelectorAll(".person").forEach(p => p.classList.remove("happy", "angry"));
-            document.querySelectorAll("#" + side + "0,#" + side + "1").forEach(p => p.classList.add("happy"));
-            const other = side === "blue" ? "red" : "blue";
-            document.querySelectorAll("#" + other + "0,#" + other + "1").forEach(p => p.classList.add("angry"));
-        }
-        function showQuestion() {
-            locked = false;
-            const q = questions[index % questions.length];
-            document.getElementById("qBlue").textContent = q.q;
-            document.getElementById("qRed").textContent = q.q;
-            renderAnswers("aBlue", q); renderAnswers("aRed", q);
-            document.getElementById("status").textContent = `Soal ${index + 1} • Pilih jawaban`;
-        }
-        function renderAnswers(id, q) {
-            const box = document.getElementById(id); box.innerHTML = "";
-            q.answers.forEach(a => {
-                const b = document.createElement("button"); b.className = "answer"; b.textContent = a.t;
-                b.onclick = () => answer(a, b, box); box.appendChild(b);
+
+        const data =
+          JSON.parse(text.substring(start, end + 1));
+
+        const rows =
+          data.table.rows || [];
+
+        questions = [];
+
+        rows.forEach(row => {
+
+          const cells = row.c || [];
+
+          function value(index) {
+
+            if (
+              !cells[index] ||
+              cells[index].v === null ||
+              cells[index].v === undefined
+            ) {
+              return "";
+            }
+
+            return String(cells[index].v).trim();
+          }
+
+          const question = value(0);
+          const correct = value(1);
+          const wrong1 = value(2);
+          const wrong2 = value(3);
+          const wrong3 = value(4);
+
+          /*
+            Baris hanya dimasukkan jika
+            A sampai E semuanya terisi.
+          */
+
+          if (
+            question &&
+            correct &&
+            wrong1 &&
+            wrong2 &&
+            wrong3
+          ) {
+
+            const answers = shuffle([
+
+              {
+                text: correct,
+                correct: true
+              },
+
+              {
+                text: wrong1,
+                correct: false
+              },
+
+              {
+                text: wrong2,
+                correct: false
+              },
+
+              {
+                text: wrong3,
+                correct: false
+              }
+
+            ]);
+
+            questions.push({
+              question: question,
+              answers: answers
             });
+          }
+
+        });
+
+
+        if (questions.length === 0) {
+
+          throw new Error(
+            "Tidak ada soal yang ditemukan. Pastikan data soal berada mulai baris 2 dan kolom A-E terisi."
+          );
+
         }
-        function answer(a, button, box) {
-            if (locked) return; locked = true;
-            box.querySelectorAll("button").forEach(b => b.disabled = true);
-            const power = 1 + Math.floor(Math.random() * 3);
-            const winner = a.correct ? "blue" : "red";
-            if (a.correct) {blueScore++; button.classList.add("correct")} else {redScore++; button.classList.add("wrong")}
-            position += winner === "blue" ? -power : power;
-            setFaces(winner); animate(winner, power); moveRope();
-            document.getElementById("score").textContent = `${blueScore} : ${redScore}`;
-            document.getElementById("status").textContent = a.correct ? `✅ BENAR! Tim Biru menarik ${power === 1 ? "sedikit" : power === 2 ? "sedang" : "kuat"}!` : `❌ SALAH! Tim Merah menarik ${power === 1 ? "sedikit" : power === 2 ? "sedang" : "kuat"}!`;
-            if (Math.abs(position) >= 9) {setTimeout(() => {alert(winner === "blue" ? "🏆 TIM BIRU MENANG!" : "🏆 TIM MERAH MENANG!"); location.reload()}, 850); return }
-            index++;
-            setTimeout(() => {resetAnim(); showQuestion()}, 1000);
+
+
+        $("setup").style.display = "none";
+
+        $("gameArea").style.display = "block";
+
+        $("status").textContent =
+          `✅ ${questions.length} soal berhasil dimuat.`;
+
+        $("question").textContent =
+          "Soal sudah siap!";
+
+        $("message").textContent =
+          "Jawab pertanyaan untuk menarik tali.";
+
+        setTimeout(startGame, 700);
+
+
+      } catch (error) {
+
+        console.error(error);
+
+        $("loading").textContent =
+          "❌ Gagal mengambil soal.";
+
+        $("error").textContent =
+          error.message +
+          " Pastikan Google Sheets disetel ke 'Siapa saja yang memiliki link → Pelihat'.";
+
+      }
+
+    }
+
+
+    /* =========================
+       MULAI GAME
+       ========================= */
+
+    function startGame() {
+
+      if (!questions.length) return;
+
+      gameStarted = true;
+
+      currentQuestion = 0;
+
+      ropePosition = 0;
+
+      updateRope();
+
+      showQuestion();
+
+    }
+
+
+    /* =========================
+       TAMPILKAN SOAL
+       ========================= */
+
+    function showQuestion() {
+
+      const q =
+        questions[currentQuestion % questions.length];
+
+      $("question").textContent =
+        q.question;
+
+      $("answers").innerHTML = "";
+
+      $("message").textContent = "";
+
+      q.answers.forEach((answer, index) => {
+
+        const button =
+          document.createElement("button");
+
+        button.className = "answer";
+
+        button.textContent =
+          `${String.fromCharCode(65 + index)}. ${answer.text}`;
+
+        button.onclick =
+          () => checkAnswer(
+            index,
+            button
+          );
+
+        $("answers").appendChild(button);
+
+      });
+
+    }
+
+
+    /* =========================
+       CEK JAWABAN
+       ========================= */
+
+    function checkAnswer(index, button) {
+
+      if (!gameStarted) return;
+
+      const q =
+        questions[currentQuestion % questions.length];
+
+      const correctIndex =
+        q.answers.findIndex(
+          answer => answer.correct
+        );
+
+      const buttons =
+        document.querySelectorAll(".answer");
+
+      buttons.forEach(
+        b => b.disabled = true
+      );
+
+
+      if (index === correctIndex) {
+
+        button.classList.add("correct");
+
+        ropePosition--;
+
+        $("message").textContent =
+          "✅ BENAR! Tim Biru menarik!";
+
+      } else {
+
+        button.classList.add("wrong");
+
+        if (buttons[correctIndex]) {
+          buttons[correctIndex]
+            .classList.add("correct");
         }
-        function animate(side, power) {
-            const win = document.querySelectorAll("#" + side + "0,#" + side + "1");
-            const lose = side === "blue" ? "red" : "blue";
-            win.forEach(x => {x.classList.remove("pullBlue", "pullRed", "beingPulled"); void x.offsetWidth; x.classList.add(side === "blue" ? "pullBlue" : "pullRed")});
-            document.querySelectorAll("#" + lose + "0,#" + lose + "1").forEach(x => {x.classList.remove("beingPulled"); void x.offsetWidth; x.classList.add("beingPulled")});
-            document.getElementById("ropeBox").classList.remove("ropeTug"); void document.getElementById("ropeBox").offsetWidth; document.getElementById("ropeBox").classList.add("ropeTug");
-            document.querySelectorAll(".dust").forEach(x => {x.classList.remove("show"); void x.offsetWidth; x.classList.add("show")});
-            const amount = (side === "blue" ? -1 : 1) * (9 + power * 9);
-            const d = `M0 50 C250 ${50 + amount} 500 ${50 - amount * .5} 750 ${50 + amount * .35} C850 ${50 + amount * .2} 930 50 1000 50`;
-            ["rope", "ropeShadow", "ropeLight"].forEach(id => document.getElementById(id).setAttribute("d", d));
-            setTimeout(() => {const normal = "M0 50 C250 50 750 50 1000 50";["rope", "ropeShadow"].forEach(id => document.getElementById(id).setAttribute("d", normal)); document.getElementById("ropeLight").setAttribute("d", "M0 47 C250 47 750 47 1000 47")}, 650);
-        }
-        function moveRope() {const x = position * 15; document.getElementById("ropeBox").style.transform = `translateX(${x}px)`; document.getElementById("flag").style.transform = `translateX(calc(-50% + ${x}px))`}
-        function resetAnim() {document.querySelectorAll(".person").forEach(x => x.classList.remove("pullBlue", "pullRed", "beingPulled", "happy", "angry")); document.getElementById("ropeBox").classList.remove("ropeTug")}
-    </script>
+
+        ropePosition++;
+
+        $("message").textContent =
+          "❌ SALAH! Tim Merah menarik!";
+
+      }
+
+
+      updateRope();
+
+
+      if (ropePosition <= -WIN_POSITION) {
+
+        setTimeout(
+          () => finishGame(
+            "🔵 TIM BIRU MENANG!"
+          ),
+          700
+        );
+
+        return;
+      }
+
+
+      if (ropePosition >= WIN_POSITION) {
+
+        setTimeout(
+          () => finishGame(
+            "🔴 TIM MERAH MENANG!"
+          ),
+          700
+        );
+
+        return;
+      }
+
+
+      currentQuestion++;
+
+      setTimeout(
+        showQuestion,
+        900
+      );
+
+    }
+
+
+    /* =========================
+       GERAKAN TALI
+       ========================= */
+
+    function updateRope() {
+
+      const movement =
+        ropePosition * 25;
+
+      $("rope").style.transform =
+        `translateX(${movement}px)`;
+
+      $("flag").style.left =
+        `calc(50% + ${movement}px)`;
+
+    }
+
+
+    /* =========================
+       SELESAI
+       ========================= */
+
+    function finishGame(text) {
+
+      gameStarted = false;
+
+      $("winner").textContent =
+        text;
+
+      $("result").style.display =
+        "flex";
+
+    }
+
+
+    /* =========================
+       JALANKAN
+       ========================= */
+
+    loadQuestions();
+
+  </script>
 </body>
 
 </html>
