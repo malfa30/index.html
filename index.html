@@ -1,671 +1,104 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tarik Tambang - Quiz</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent
-    }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Game Tarik Tambang Quiz</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#45b9f3;color:#101828}
+button,input{font:inherit}#setup{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(#45b9f3 0 52%,#62b54a 52%)}
+.setup{width:min(560px,100%);background:#fff;border:3px solid #12395e;border-radius:22px;padding:28px;box-shadow:0 12px 35px #0005;text-align:center}.setup h1{margin:0 0 18px;font-size:30px}.setup input{width:100%;padding:15px;border:2px solid #aaa;border-radius:12px}.setup button{width:100%;margin-top:12px;padding:15px;border:0;border-radius:11px;background:#219a3b;color:white;font-weight:900}.err{color:#c62828;font-weight:bold;margin-top:10px}
+#game{display:none;min-height:100vh;background:linear-gradient(#46baf4 0 48%,#64b34b 48%);overflow:hidden}.wrap{max-width:1550px;margin:auto;padding:18px}
+.top{display:flex;justify-content:space-between;position:relative;z-index:30}.badge{background:#073764;color:#fff;border-radius:15px;padding:12px 20px;font-weight:900;box-shadow:0 5px 0 #032542}
+.logo{text-align:center;margin-top:-48px;position:relative;z-index:4;text-shadow:4px 5px #12395e}.logo b{display:block;color:#fff;font-size:clamp(42px,5vw,72px);-webkit-text-stroke:2px #12395e}.logo strong{display:block;color:#ffc719;font-size:clamp(36px,4.5vw,64px);-webkit-text-stroke:2px #12395e}.logo em{display:inline-block;background:#d93425;color:#fff;font-style:normal;font-weight:1000;font-size:clamp(22px,2.5vw,35px);padding:4px 85px;border-radius:10px;box-shadow:0 5px #8e2119}
+.arena{height:430px;position:relative;border-radius:25px;overflow:hidden;background:linear-gradient(#45baf4 0 52%,#b8e6a0 52%)}.cloud{position:absolute;width:150px;height:42px;background:#fff;border-radius:50px;opacity:.8}.cloud:before,.cloud:after{content:"";position:absolute;background:#fff;border-radius:50%}.cloud:before{width:65px;height:65px;left:20px;top:-30px}.cloud:after{width:80px;height:80px;right:18px;top:-42px}.c1{left:8%;top:75px}.c2{right:10%;top:105px}.c3{left:44%;top:165px;transform:scale(.7)}
+.field{position:absolute;bottom:-100px;left:-10%;width:120%;height:250px;background:#65b04b;border-radius:50% 50% 0 0}.grass{position:absolute;bottom:0;left:0;right:0;height:110px;background:repeating-linear-gradient(78deg,transparent 0 13px,#397d38 14px 16px,transparent 17px 29px);opacity:.55}
+.rope{position:absolute;left:7%;right:7%;top:278px;height:70px;z-index:12;transition:transform .55s ease}.rope svg{width:100%;height:100%;overflow:visible}.rs{fill:none;stroke:#0004;stroke-width:16;stroke-linecap:round}.rm{fill:none;stroke:#70451e;stroke-width:11;stroke-linecap:round}.rh{fill:none;stroke:#d19a57;stroke-width:3;stroke-dasharray:13 8}
+.marker{position:absolute;left:50%;top:264px;width:34px;height:57px;background:#ffd52a;border:4px solid #9c7100;border-radius:6px;z-index:15;transition:transform .55s ease}.marker:after{content:"";position:absolute;top:53px;left:12px;height:58px;border-left:4px solid #60401e}
+.team{position:absolute;top:175px;width:44%;height:250px;z-index:8}.blue{left:1%}.red{right:1%}
+.person{position:absolute;width:185px;height:245px;bottom:-3px;transition:.5s ease}.blue .p1{left:0}.blue .p2{left:28%}.blue .p3{left:55%}.red .p1{right:0}.red .p2{right:28%}.red .p3{right:55%}
+.person svg{width:100%;height:100%;overflow:visible}.o{stroke:#171717;stroke-width:3;stroke-linejoin:round;stroke-linecap:round}.skin{fill:#f0aa80}.hair{fill:#111}.shirtB{fill:#176bd4}.shirtR{fill:#e1322a}.white{fill:#f7f7f7}.shoe{fill:#202020}
+.angry .mouth{d:path("M98 91 Q111 80 125 91")}.happy .mouth{d:path("M98 89 Q111 105 125 89")}.angry .brow1{transform:rotate(17deg)}.angry .brow2{transform:rotate(-17deg)}
+.pullB{animation:pb .65s}.pullR{animation:pr .65s}.shake{animation:sh .65s}@keyframes pb{30%{transform:translate(-17px,9px) rotate(-5deg)}70%{transform:translate(3px,-2px)}}@keyframes pr{30%{transform:translate(17px,9px) rotate(5deg)}70%{transform:translate(-3px,-2px)}}@keyframes sh{35%{transform:translateY(8px) rotate(3deg)}70%{transform:translateY(-1px)}}
+.dust{position:absolute;width:15px;height:15px;border-radius:50%;background:#cbb88d;z-index:3}.dust.on{animation:du .7s}@keyframes du{to{opacity:0;transform:translateY(-38px) scale(3)}}
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(#87ceeb, #eefaff);
-      min-height: 100vh
-    }
-
-    .game {
-      width: 100%;
-      max-width: 680px;
-      margin: auto;
-      padding: 14px
-    }
-
-    h1 {
-      text-align: center;
-      margin: 4px 0 14px;
-      font-size: 28px
-    }
-
-    .panel,
-    .questionBox {
-      background: #fff;
-      border-radius: 18px;
-      padding: 18px;
-      box-shadow: 0 5px 18px #0002
-    }
-
-    .setupText {
-      font-size: 14px;
-      line-height: 1.55;
-      color: #555
-    }
-
-    #loading {
-      text-align: center;
-      font-weight: bold;
-      margin: 12px 0
-    }
-
-    #error {
-      color: #c62828;
-      font-weight: bold;
-      margin-top: 10px;
-      line-height: 1.4
-    }
-
-    #gameArea {
-      display: none
-    }
-
-    .score {
-      display: flex;
-      justify-content: space-between;
-      font-weight: bold;
-      margin: 8px 2px 10px
-    }
-
-    .blueText {
-      color: #1769ff
-    }
-
-    .redText {
-      color: #e53935
-    }
-
-    .arena {
-      position: relative;
-      height: 240px;
-      background: #80c95a;
-      border: 4px solid #333;
-      border-radius: 20px;
-      overflow: hidden
-    }
-
-    .ground {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 48px;
-      background: #795548
-    }
-
-    .character {
-      position: absolute;
-      bottom: 40px;
-      font-size: 64px;
-      transition: .4s
-    }
-
-    .blue {
-      left: 7px
-    }
-
-    .red {
-      right: 7px;
-      transform: scaleX(-1)
-    }
-
-    .rope {
-      position: absolute;
-      top: 130px;
-      left: 10%;
-      width: 80%;
-      height: 10px;
-      background: #c49a6c;
-      border: 2px solid #704214;
-      border-radius: 10px;
-      transition: .4s
-    }
-
-    .flag {
-      position: absolute;
-      top: 87px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 38px;
-      transition: .4s
-    }
-
-    #status {
-      text-align: center;
-      font-weight: bold;
-      margin: 10px 0
-    }
-
-    #question {
-      text-align: center;
-      font-size: 21px;
-      font-weight: bold;
-      line-height: 1.4;
-      min-height: 58px
-    }
-
-    .answers {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 12px
-    }
-
-    .answer {
-      background: #eee;
-      width: 100%;
-      min-height: 58px
-    }
-
-    .answer:active {
-      transform: scale(.97)
-    }
-
-    .correct {
-      background: #4caf50 !important;
-      color: #fff
-    }
-
-    .wrong {
-      background: #f44336 !important;
-      color: #fff
-    }
-
-    #message {
-      text-align: center;
-      font-weight: bold;
-      min-height: 24px;
-      margin: 10px 0
-    }
-
-    #result {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: #000c;
-      z-index: 10;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      color: #fff;
-      text-align: center;
-      padding: 20px
-    }
-
-    #result h2 {
-      font-size: 34px;
-      margin: 10px
-    }
-
-    .resultBtn {
-      background: #fff;
-      color: #111
-    }
-
-    @media(max-width:430px) {
-      .game {
-        padding: 10px
-      }
-
-      .arena {
-        height: 205px
-      }
-
-      .character {
-        font-size: 52px
-      }
-
-      #question {
-        font-size: 18px
-      }
-
-      .answer {
-        font-size: 15px
-      }
-    }
-  </style>
+.boards{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:18px}.board{padding:10px;border-radius:22px;box-shadow:0 8px 20px #0005}.bb{background:#075dd0}.rr{background:#d92419}.title{text-align:center;color:#fff;font-weight:1000;font-size:32px;padding:5px}.card{background:#f8faff;border-radius:16px;padding:14px}.label{text-align:center;font-weight:900}.q{text-align:center;font-size:23px;font-weight:900;min-height:62px;padding:10px}.answers{display:grid;grid-template-columns:1fr 1fr;gap:12px}.ans{display:flex;align-items:center;border:2px solid #c2c8d0;border-radius:10px;background:#fff;min-height:60px;cursor:pointer;text-align:left;font-weight:800;overflow:hidden}.letter{height:60px;width:58px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px;font-weight:1000;flex:none}.bb .letter{background:#075dd0}.rr .letter{background:#d92419}.txt{padding:10px}.ok{background:#37aa50!important;color:#fff}.no{background:#e33c35!important;color:#fff}
+.info{max-width:700px;margin:15px auto;background:#fff2c5;border:2px solid #8d6d2a;border-radius:12px;text-align:center;padding:11px;font-weight:800}.bottom{display:flex;justify-content:space-between}.bottom button{border:0;background:#073764;color:#fff;padding:11px 17px;border-radius:11px;font-weight:900}
+@media(max-width:850px){.logo{margin-top:8px}.arena{height:330px}.team{top:160px}.person{width:125px;height:170px}.rope{top:230px}.marker{top:216px}.boards{grid-template-columns:1fr}.q{font-size:20px}}
+@media(max-width:520px){.wrap{padding:7px}.badge{padding:9px;font-size:12px}.logo b{font-size:34px}.logo strong{font-size:30px}.logo em{font-size:18px;padding:3px 38px}.arena{height:260px}.team{top:135px;height:120px}.person{width:82px;height:112px}.blue .p2{left:26%}.blue .p3{left:51%}.red .p2{right:26%}.red .p3{right:51%}.rope{top:187px;left:2%;right:2%;height:40px}.marker{top:176px;width:24px;height:42px}.marker:after{top:39px;height:42px}.boards{gap:10px}.title{font-size:24px}.answers{grid-template-columns:1fr}.bottom{gap:8px}.bottom button{font-size:12px}}
+</style>
 </head>
-
 <body>
-  <div class="game">
-    <h1>🪢 TARIK TAMBANG 🪢</h1>
-
-    <!--
-  GOOGLE SHEETS KAMU SUDAH DIPASANG OTOMATIS.
-  FORMAT:
-  A = Pertanyaan
-  B = Jawaban Benar
-  C = Jawaban Salah 1
-  D = Jawaban Salah 2
-  E = Jawaban Salah 3
--->
-    <div id="setup" class="panel">
-      <div class="setupText">
-        <b>📚 Sumber soal:</b> Google Sheets kamu<br><br>
-        A = Pertanyaan<br>
-        B = Jawaban Benar<br>
-        C = Jawaban Salah 1<br>
-        D = Jawaban Salah 2<br>
-        E = Jawaban Salah 3
-      </div>
-      <div id="loading">⏳ Menghubungkan ke Google Sheets...</div>
-      <div id="error"></div>
-    </div>
-
-    <div id="gameArea">
-      <div class="score">
-        <span class="blueText">🔵 TIM BIRU</span>
-        <span class="redText">TIM MERAH 🔴</span>
-      </div>
-
-      <div class="arena">
-        <div class="character blue">🏃</div>
-        <div class="character red">🏃</div>
-        <div class="rope" id="rope"></div>
-        <div class="flag" id="flag">🚩</div>
-        <div class="ground"></div>
-      </div>
-
-      <div id="status"></div>
-
-      <div class="questionBox">
-        <div id="question"></div>
-        <div class="answers" id="answers"></div>
-        <div id="message"></div>
-      </div>
-    </div>
-  </div>
-
-  <div id="result">
-    <h2 id="winner"></h2>
-    <p>Permainan selesai!</p>
-    <button class="resultBtn" onclick="location.reload()">🔄 MAIN LAGI</button>
-  </div>
-
-  <script>
-    /* =========================
-       GOOGLE SHEETS
-       ========================= */
-
-    const SHEET_ID = "1bjO7_rm4hc14hFFyk_-CY3BXTWKsoklt93DdNsaPP3s";
-    const SHEET_GID = "0";
-
-    /*
-       Data Sheet:
-       A = pertanyaan
-       B = benar
-       C = salah 1
-       D = salah 2
-       E = salah 3
-    */
-
-    let questions = [];
-    let currentQuestion = 0;
-    let ropePosition = 0;
-    let gameStarted = false;
-
-    const WIN_POSITION = 6;
-
-    const $ = id => document.getElementById(id);
-
-
-    /* =========================
-       ACAK JAWABAN
-       ========================= */
-
-    function shuffle(array) {
-      const arr = [...array];
-
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-
-      return arr;
-    }
-
-
-    /* =========================
-       AMBIL DATA GOOGLE SHEETS
-       ========================= */
-
-    async function loadQuestions() {
-
-      try {
-
-        const url =
-          `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${SHEET_GID}`;
-
-        const response = await fetch(url);
-
-        if (!response.ok) {
-          throw new Error(
-            "Google Sheets tidak bisa diakses."
-          );
-        }
-
-        const text = await response.text();
-
-        const start = text.indexOf("{");
-        const end = text.lastIndexOf("}");
-
-        if (start === -1 || end === -1) {
-          throw new Error(
-            "Format data Google Sheets tidak terbaca."
-          );
-        }
-
-        const data =
-          JSON.parse(text.substring(start, end + 1));
-
-        const rows =
-          data.table.rows || [];
-
-        questions = [];
-
-        rows.forEach(row => {
-
-          const cells = row.c || [];
-
-          function value(index) {
-
-            if (
-              !cells[index] ||
-              cells[index].v === null ||
-              cells[index].v === undefined
-            ) {
-              return "";
-            }
-
-            return String(cells[index].v).trim();
-          }
-
-          const question = value(0);
-          const correct = value(1);
-          const wrong1 = value(2);
-          const wrong2 = value(3);
-          const wrong3 = value(4);
-
-          /*
-            Baris hanya dimasukkan jika
-            A sampai E semuanya terisi.
-          */
-
-          if (
-            question &&
-            correct &&
-            wrong1 &&
-            wrong2 &&
-            wrong3
-          ) {
-
-            const answers = shuffle([
-
-              {
-                text: correct,
-                correct: true
-              },
-
-              {
-                text: wrong1,
-                correct: false
-              },
-
-              {
-                text: wrong2,
-                correct: false
-              },
-
-              {
-                text: wrong3,
-                correct: false
-              }
-
-            ]);
-
-            questions.push({
-              question: question,
-              answers: answers
-            });
-          }
-
-        });
-
-
-        if (questions.length === 0) {
-
-          throw new Error(
-            "Tidak ada soal yang ditemukan. Pastikan data soal berada mulai baris 2 dan kolom A-E terisi."
-          );
-
-        }
-
-
-        $("setup").style.display = "none";
-
-        $("gameArea").style.display = "block";
-
-        $("status").textContent =
-          `✅ ${questions.length} soal berhasil dimuat.`;
-
-        $("question").textContent =
-          "Soal sudah siap!";
-
-        $("message").textContent =
-          "Jawab pertanyaan untuk menarik tali.";
-
-        setTimeout(startGame, 700);
-
-
-      } catch (error) {
-
-        console.error(error);
-
-        $("loading").textContent =
-          "❌ Gagal mengambil soal.";
-
-        $("error").textContent =
-          error.message +
-          " Pastikan Google Sheets disetel ke 'Siapa saja yang memiliki link → Pelihat'.";
-
-      }
-
-    }
-
-
-    /* =========================
-       MULAI GAME
-       ========================= */
-
-    function startGame() {
-
-      if (!questions.length) return;
-
-      gameStarted = true;
-
-      currentQuestion = 0;
-
-      ropePosition = 0;
-
-      updateRope();
-
-      showQuestion();
-
-    }
-
-
-    /* =========================
-       TAMPILKAN SOAL
-       ========================= */
-
-    function showQuestion() {
-
-      const q =
-        questions[currentQuestion % questions.length];
-
-      $("question").textContent =
-        q.question;
-
-      $("answers").innerHTML = "";
-
-      $("message").textContent = "";
-
-      q.answers.forEach((answer, index) => {
-
-        const button =
-          document.createElement("button");
-
-        button.className = "answer";
-
-        button.textContent =
-          `${String.fromCharCode(65 + index)}. ${answer.text}`;
-
-        button.onclick =
-          () => checkAnswer(
-            index,
-            button
-          );
-
-        $("answers").appendChild(button);
-
-      });
-
-    }
-
-
-    /* =========================
-       CEK JAWABAN
-       ========================= */
-
-    function checkAnswer(index, button) {
-
-      if (!gameStarted) return;
-
-      const q =
-        questions[currentQuestion % questions.length];
-
-      const correctIndex =
-        q.answers.findIndex(
-          answer => answer.correct
-        );
-
-      const buttons =
-        document.querySelectorAll(".answer");
-
-      buttons.forEach(
-        b => b.disabled = true
-      );
-
-
-      if (index === correctIndex) {
-
-        button.classList.add("correct");
-
-        ropePosition--;
-
-        $("message").textContent =
-          "✅ BENAR! Tim Biru menarik!";
-
-      } else {
-
-        button.classList.add("wrong");
-
-        if (buttons[correctIndex]) {
-          buttons[correctIndex]
-            .classList.add("correct");
-        }
-
-        ropePosition++;
-
-        $("message").textContent =
-          "❌ SALAH! Tim Merah menarik!";
-
-      }
-
-
-      updateRope();
-
-
-      if (ropePosition <= -WIN_POSITION) {
-
-        setTimeout(
-          () => finishGame(
-            "🔵 TIM BIRU MENANG!"
-          ),
-          700
-        );
-
-        return;
-      }
-
-
-      if (ropePosition >= WIN_POSITION) {
-
-        setTimeout(
-          () => finishGame(
-            "🔴 TIM MERAH MENANG!"
-          ),
-          700
-        );
-
-        return;
-      }
-
-
-      currentQuestion++;
-
-      setTimeout(
-        showQuestion,
-        900
-      );
-
-    }
-
-
-    /* =========================
-       GERAKAN TALI
-       ========================= */
-
-    function updateRope() {
-
-      const movement =
-        ropePosition * 25;
-
-      $("rope").style.transform =
-        `translateX(${movement}px)`;
-
-      $("flag").style.left =
-        `calc(50% + ${movement}px)`;
-
-    }
-
-
-    /* =========================
-       SELESAI
-       ========================= */
-
-    function finishGame(text) {
-
-      gameStarted = false;
-
-      $("winner").textContent =
-        text;
-
-      $("result").style.display =
-        "flex";
-
-    }
-
-
-    /* =========================
-       JALANKAN
-       ========================= */
-
-    loadQuestions();
-
-  </script>
-</body>
-
-</html>
+<section id="setup"><div class="setup">
+<h1>🪢 GAME TARIK TAMBANG QUIZ</h1>
+<p>Masukkan link Google Sheet soal kamu</p>
+<input id="url" placeholder="https://docs.google.com/spreadsheets/d/1...">
+<button onclick="loadSheet()">▣ &nbsp; MULAI GAME</button>
+<div id="err" class="err"></div>
+<small>Kolom A = Pertanyaan • B = Jawaban Benar • C/D/E = Jawaban Salah</small>
+</div></section>
+
+<section id="game"><div class="wrap">
+<div class="top"><div class="badge">❔ PETUNJUK</div><div class="badge">🏆 Skor &nbsp; <span id="score">0 : 0</span></div></div>
+<div class="logo"><b>GAME</b><strong>TARIK TAMBANG</strong><em>QUIZ</em></div>
+<div class="arena">
+<div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div><div class="field"></div><div class="grass"></div>
+<div class="team blue" id="blueTeam"></div><div class="team red" id="redTeam"></div>
+<div class="rope"><svg viewBox="0 0 1000 70" preserveAspectRatio="none"><path id="shadow" class="rs" d="M0 35 C250 35 750 35 1000 35"/><path id="main" class="rm" d="M0 35 C250 35 750 35 1000 35"/><path id="hi" class="rh" d="M0 31 C250 31 750 31 1000 31"/></svg></div>
+<div id="marker" class="marker"></div>
+<div class="dust" style="left:8%;bottom:28px"></div><div class="dust" style="left:30%;bottom:28px"></div><div class="dust" style="right:8%;bottom:28px"></div><div class="dust" style="right:30%;bottom:28px"></div>
+</div>
+<div class="boards">
+<div class="board bb"><div class="title">TIM BIRU</div><div class="card"><div class="label">PERTANYAAN</div><div class="q" id="qb"></div><div class="answers" id="ab"></div></div></div>
+<div class="board rr"><div class="title">TIM MERAH</div><div class="card"><div class="label">PERTANYAAN</div><div class="q" id="qr"></div><div class="answers" id="ar"></div></div></div>
+</div>
+<div class="info">ℹ️ Jawab dengan benar untuk menarik tali ke arah tim kamu!<br>Benar = Tim Biru menang &nbsp; | &nbsp; Salah = Tim Merah menang</div>
+<div class="bottom"><button onclick="reset()">🔄 Reset Skor</button><button onclick="location.reload()">🔗 Ganti Link</button></div>
+</div></section>
+
+<script>
+let data=[],n=0,sb=0,sr=0,pos=0,busy=false;
+const $=id=>document.getElementById(id);
+function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function person(color){
+let shirt=color==='b'?'shirtB':'shirtR';
+return `<svg viewBox="0 0 220 270">
+<path class="skin o" d="M70 174 L60 232 L86 233 L104 178Z"/><path class="skin o" d="M126 176 L140 232 L166 231 L151 173Z"/>
+<ellipse class="shoe o" cx="73" cy="239" rx="31" ry="9"/><ellipse class="shoe o" cx="156" cy="238" rx="31" ry="9"/>
+<path class="white o" d="M62 151 L154 151 L157 191 Q110 204 61 188Z"/>
+<path class="${shirt} o" d="M61 96 Q109 76 158 99 L158 164 Q110 181 61 164Z"/>
+<circle class="skin o" cx="110" cy="60" r="42"/><path class="hair o" d="M68 62 Q62 21 103 14 Q147 11 158 54 Q136 38 113 40 Q89 39 68 62Z"/>
+<!-- tangan kiri dan kanan menggenggam tali -->
+<path class="skin o" d="M70 109 Q46 119 24 139 L31 154 Q59 145 87 133Z"/><circle class="skin o" cx="28" cy="147" r="11"/>
+<path class="skin o" d="M150 109 Q176 119 199 139 L192 154 Q163 145 136 133Z"/><circle class="skin o" cx="195" cy="147" r="11"/>
+<path class="brow brow1 o" d="M88 58 L102 61"/><path class="brow brow2 o" d="M119 61 L133 58"/>
+<circle cx="97" cy="70" r="4"/><circle cx="128" cy="70" r="4"/>
+<path class="mouth o" d="M98 90 Q111 100 125 90"/>
+<path d="M74 77 Q63 91 76 91 Q82 88 74 77Z" fill="#d5f5ff" stroke="#2389bd" stroke-width="2"/>
+</svg>`}
+function people(){
+$('blueTeam').innerHTML=['p1','p2','p3'].map(x=>`<div class="person ${x}">${person('b')}</div>`).join('');
+$('redTeam').innerHTML=['p1','p2','p3'].map(x=>`<div class="person ${x}">${person('r')}</div>`).join('');
+}
+function idgid(u){let m=u.match(/\/spreadsheets\/d\/([A-Za-z0-9_-]+)/);if(!m)throw Error('Link Google Sheet tidak valid');return [m[1],(u.match(/[?&#]gid=(\\d+)/)||[])[1]||'0']}
+async function loadSheet(){
+try{let [id,gid]=idgid($('url').value.trim());let r=await fetch(`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:json&gid=${gid}`);if(!r.ok)throw Error('Google Sheet gagal diakses');
+let t=await r.text(),j=JSON.parse(t.slice(t.indexOf('{'),t.lastIndexOf('}')+1));data=[];
+(j.table.rows||[]).forEach(x=>{let c=x.c||[],v=i=>c[i]?.v==null?'':String(c[i].v).trim();if(v(0)&&v(1)&&v(2)&&v(3)&&v(4))data.push({q:v(0),a:shuffle([{t:v(1),ok:1},{t:v(2)},{t:v(3)},{t:v(4)}])})});
+if(!data.length)throw Error('Soal tidak ditemukan. Pastikan kolom A-E terisi.');$('setup').style.display='none';$('game').style.display='block';people();show()
+}catch(e){$('err').textContent='❌ '+e.message}}
+function show(){busy=false;let q=data[n%data.length];$('qb').textContent=q.q;$('qr').textContent=q.q;answers($('ab'),q);answers($('ar'),q)}
+function answers(box,q){box.innerHTML='';q.a.forEach((a,i)=>{let b=document.createElement('button');b.className='ans';b.innerHTML=`<span class="letter">${String.fromCharCode(65+i)}</span><span class="txt">${a.t}</span>`;b.onclick=()=>answer(a,b);box.appendChild(b)})}
+function answer(a,b){
+if(busy)return;busy=true;document.querySelectorAll('.ans').forEach(x=>x.disabled=true);b.classList.add(a.ok?'ok':'no');
+let team=a.ok?'blue':'red',step=1+Math.floor(Math.random()*3);team==='blue'?sb++:sr++;$('score').textContent=sb+' : '+sr;
+document.querySelectorAll('.person').forEach(x=>x.classList.remove('pullB','pullR','shake','happy','angry'));
+document.querySelectorAll('.'+team+' .person').forEach(x=>x.classList.add(team==='blue'?'pullB':'pullR','happy'));
+document.querySelectorAll('.'+(team==='blue'?'red':'blue')+' .person').forEach(x=>x.classList.add('shake','angry'));
+pos+=(team==='blue'?-step:step);$('marker').style.transform=`translateX(calc(-50% + ${pos*12}px))`;$('rope').style.transform=`translateX(${pos*12}px)`;
+bend(team,step);document.querySelectorAll('.dust').forEach(x=>{x.classList.remove('on');void x.offsetWidth;x.classList.add('on')});
+if(Math.abs(pos)>=9){setTimeout(()=>alert(team==='blue'?'🏆 TIM BIRU MENANG!':'🏆 TIM MERAH MENANG!'),650);setTimeout(reset,1000)}else{n++;setTimeout(show,850)}}
+function bend(team,s){let z=(team==='blue'?-1:1)*(8+s*4),d=`M0 35 C250 ${35+z} 500 ${35-z} 750 ${35+z/2} C850 ${35+z/3} 930 35 1000 35`;['shadow','main','hi'].forEach(id=>$(id).setAttribute('d',d));setTimeout(()=>{let q='M0 35 C250 35 750 35 1000 35';$('shadow').setAttribute('d',q);$('main').setAttribute('d',q);$('hi').setAttribute('d','M0 31 C250 31 750 31 1000 31')},650)}
+function reset(){sb=sr=n=pos=0;$('score').textContent='0 : 0';people();show();$('marker').style.transform='translateX(-50%)';$('rope').style.transform='translateX(0)')}
+</script>
+</body></html>
