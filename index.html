@@ -1,18 +1,671 @@
-<!doctype html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Tarik Tambang</title>
-<style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial;background:linear-gradient(#87ceeb,#eefaff);min-height:100vh}.game{max-width:650px;margin:auto;padding:16px}h1{text-align:center}.panel,.questionBox{background:#fff;border-radius:18px;padding:18px;box-shadow:0 5px 18px #0002}input{width:100%;padding:14px;border:2px solid #ccc;border-radius:12px;font-size:15px}button{border:0;border-radius:12px;padding:14px;font-size:17px;font-weight:bold;cursor:pointer}.connect,.start{width:100%;margin-top:10px;background:#222;color:#fff}.hint{font-size:13px;color:#666;line-height:1.5}.score{display:flex;justify-content:space-between;font-weight:bold;margin:10px 0}.blueText{color:#1769ff}.redText{color:#e53935}.arena{position:relative;height:240px;background:#80c95a;border:4px solid #333;border-radius:20px;overflow:hidden}.ground{position:absolute;bottom:0;width:100%;height:48px;background:#795548}.character{position:absolute;bottom:40px;font-size:65px;transition:.4s}.blue{left:8px}.red{right:8px;transform:scaleX(-1)}.rope{position:absolute;top:130px;left:10%;width:80%;height:10px;background:#c49a6c;border:2px solid #704214;border-radius:10px;transition:.4s}.flag{position:absolute;top:88px;left:50%;transform:translateX(-50%);font-size:38px;transition:.4s}#gameArea{display:none}.questionBox{margin-top:15px}#question{text-align:center;font-size:21px;font-weight:bold;min-height:55px}.answers{display:grid;grid-template-columns:1fr 1fr;gap:10px}.answer{background:#eee;width:100%}.correct{background:#4caf50!important;color:white}.wrong{background:#f44336!important;color:white}#message{text-align:center;font-weight:bold;min-height:24px;margin:10px 0}#error{color:#c62828;font-weight:bold;margin-top:10px}#result{display:none;position:fixed;inset:0;background:#000c;z-index:5;align-items:center;justify-content:center;flex-direction:column;color:white;text-align:center}#result h2{font-size:36px}</style></head>
-<body><div class="game"><h1>🪢 TARIK TAMBANG 🪢</h1>
-<div id="setup" class="panel"><b>🔗 Link Google Sheets Soal</b><br><br><input id="sheetUrl" type="url" placeholder="Tempel link Google Sheets di sini"><button class="connect" onclick="connectSheet()">📥 Hubungkan Soal</button><p class="hint">Setel Google Sheets: <b>Siapa saja yang memiliki link → Pelihat</b>.<br>Kolom: <b>Soal | A | B | C | D | Benar</b></p><div id="error"></div></div>
-<div id="gameArea"><div class="score"><span class="blueText">🔵 TIM BIRU</span><span class="redText">TIM MERAH 🔴</span></div><div class="arena"><div class="character blue">🏃</div><div class="character red">🏃</div><div class="rope" id="rope"></div><div class="flag" id="flag">🚩</div><div class="ground"></div></div><p id="status"></p><div class="questionBox"><div id="question">Soal siap.</div><div class="answers" id="answers"></div><div id="message"></div><button class="start" id="startButton" onclick="startGame()">▶️ MULAI</button></div></div></div>
-<div id="result"><h2 id="winner"></h2><p>Permainan selesai!</p><button onclick="location.reload()">🔄 MAIN LAGI</button></div>
-<script>
-let questions=[],currentQuestion=0,ropePosition=0,gameStarted=false;const winPosition=6;
-function $(id){return document.getElementById(id)}
-function extract(url){let m=url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);if(!m)throw Error("Link Google Sheets tidak valid.");let g=(url.match(/[?#&]gid=([0-9]+)/)||[])[1]||"0";return{id:m[1],gid:g}}
-async function connectSheet(){let err=$("error"),btn=document.querySelector(".connect");err.textContent="";try{let u=extract($("sheetUrl").value.trim());btn.disabled=true;btn.textContent="⏳ Memuat...";let r=await fetch(`https://docs.google.com/spreadsheets/d/${u.id}/gviz/tq?tqx=out:json&gid=${u.gid}`);if(!r.ok)throw Error("Google Sheets tidak dapat diakses.");let t=await r.text(),j=JSON.parse(t.slice(t.indexOf("{"),t.lastIndexOf("}")+1));questions=[];(j.table.rows||[]).forEach(row=>{let c=row.c||[],v=i=>c[i]&&c[i].v!=null?String(c[i].v).trim():"";let q=v(0),a=v(1),b=v(2),cc=v(3),d=v(4),ok=v(5).toUpperCase();if(q&&a&&b&&cc&&d&&["A","B","C","D"].includes(ok))questions.push({question:q,answers:[a,b,cc,d],correct:ok})});if(!questions.length)throw Error("Tidak ada soal valid. Cek format Sheet.");$("setup").style.display="none";$("gameArea").style.display="block";$("status").textContent=`✅ ${questions.length} soal berhasil dimuat.`}catch(e){err.textContent="❌ "+e.message}finally{btn.disabled=false;btn.textContent="📥 Hubungkan Soal"}}
-function startGame(){gameStarted=true;currentQuestion=0;ropePosition=0;$("startButton").style.display="none";updateRope();showQuestion()}
-function showQuestion(){let q=questions[currentQuestion%questions.length];$("question").textContent=q.question;$("answers").innerHTML="";$("message").textContent="";q.answers.forEach((a,i)=>{let b=document.createElement("button");b.className="answer";b.textContent=String.fromCharCode(65+i)+". "+a;b.onclick=()=>checkAnswer(i,b);$("answers").appendChild(b)})}
-function checkAnswer(i,b){if(!gameStarted)return;let q=questions[currentQuestion%questions.length],ci=["A","B","C","D"].indexOf(q.correct),bs=document.querySelectorAll(".answer");bs.forEach(x=>x.disabled=true);if(i===ci){b.classList.add("correct");ropePosition--;$("message").textContent="✅ BENAR! Tim Biru menarik!"}else{b.classList.add("wrong");bs[ci].classList.add("correct");ropePosition++;$("message").textContent="❌ SALAH! Tim Merah menarik!"}updateRope();if(ropePosition<=-winPosition)return setTimeout(()=>finish("🔵 TIM BIRU MENANG!"),700);if(ropePosition>=winPosition)return setTimeout(()=>finish("🔴 TIM MERAH MENANG!"),700);currentQuestion++;setTimeout(showQuestion,900)}
-function updateRope(){let m=ropePosition*25;$("rope").style.transform=`translateX(${m}px)`;$("flag").style.left=`calc(50% + ${m}px)`}
-function finish(t){gameStarted=false;$("winner").textContent=t;$("result").style.display="flex"}
-</script></body></html>
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tarik Tambang - Quiz</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(#87ceeb, #eefaff);
+      min-height: 100vh
+    }
+
+    .game {
+      width: 100%;
+      max-width: 680px;
+      margin: auto;
+      padding: 14px
+    }
+
+    h1 {
+      text-align: center;
+      margin: 4px 0 14px;
+      font-size: 28px
+    }
+
+    .panel,
+    .questionBox {
+      background: #fff;
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 5px 18px #0002
+    }
+
+    .setupText {
+      font-size: 14px;
+      line-height: 1.55;
+      color: #555
+    }
+
+    #loading {
+      text-align: center;
+      font-weight: bold;
+      margin: 12px 0
+    }
+
+    #error {
+      color: #c62828;
+      font-weight: bold;
+      margin-top: 10px;
+      line-height: 1.4
+    }
+
+    #gameArea {
+      display: none
+    }
+
+    .score {
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+      margin: 8px 2px 10px
+    }
+
+    .blueText {
+      color: #1769ff
+    }
+
+    .redText {
+      color: #e53935
+    }
+
+    .arena {
+      position: relative;
+      height: 240px;
+      background: #80c95a;
+      border: 4px solid #333;
+      border-radius: 20px;
+      overflow: hidden
+    }
+
+    .ground {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 48px;
+      background: #795548
+    }
+
+    .character {
+      position: absolute;
+      bottom: 40px;
+      font-size: 64px;
+      transition: .4s
+    }
+
+    .blue {
+      left: 7px
+    }
+
+    .red {
+      right: 7px;
+      transform: scaleX(-1)
+    }
+
+    .rope {
+      position: absolute;
+      top: 130px;
+      left: 10%;
+      width: 80%;
+      height: 10px;
+      background: #c49a6c;
+      border: 2px solid #704214;
+      border-radius: 10px;
+      transition: .4s
+    }
+
+    .flag {
+      position: absolute;
+      top: 87px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 38px;
+      transition: .4s
+    }
+
+    #status {
+      text-align: center;
+      font-weight: bold;
+      margin: 10px 0
+    }
+
+    #question {
+      text-align: center;
+      font-size: 21px;
+      font-weight: bold;
+      line-height: 1.4;
+      min-height: 58px
+    }
+
+    .answers {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px
+    }
+
+    .answer {
+      background: #eee;
+      width: 100%;
+      min-height: 58px
+    }
+
+    .answer:active {
+      transform: scale(.97)
+    }
+
+    .correct {
+      background: #4caf50 !important;
+      color: #fff
+    }
+
+    .wrong {
+      background: #f44336 !important;
+      color: #fff
+    }
+
+    #message {
+      text-align: center;
+      font-weight: bold;
+      min-height: 24px;
+      margin: 10px 0
+    }
+
+    #result {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #000c;
+      z-index: 10;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      color: #fff;
+      text-align: center;
+      padding: 20px
+    }
+
+    #result h2 {
+      font-size: 34px;
+      margin: 10px
+    }
+
+    .resultBtn {
+      background: #fff;
+      color: #111
+    }
+
+    @media(max-width:430px) {
+      .game {
+        padding: 10px
+      }
+
+      .arena {
+        height: 205px
+      }
+
+      .character {
+        font-size: 52px
+      }
+
+      #question {
+        font-size: 18px
+      }
+
+      .answer {
+        font-size: 15px
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="game">
+    <h1>🪢 TARIK TAMBANG 🪢</h1>
+
+    <!--
+  GOOGLE SHEETS KAMU SUDAH DIPASANG OTOMATIS.
+  FORMAT:
+  A = Pertanyaan
+  B = Jawaban Benar
+  C = Jawaban Salah 1
+  D = Jawaban Salah 2
+  E = Jawaban Salah 3
+-->
+    <div id="setup" class="panel">
+      <div class="setupText">
+        <b>📚 Sumber soal:</b> Google Sheets kamu<br><br>
+        A = Pertanyaan<br>
+        B = Jawaban Benar<br>
+        C = Jawaban Salah 1<br>
+        D = Jawaban Salah 2<br>
+        E = Jawaban Salah 3
+      </div>
+      <div id="loading">⏳ Menghubungkan ke Google Sheets...</div>
+      <div id="error"></div>
+    </div>
+
+    <div id="gameArea">
+      <div class="score">
+        <span class="blueText">🔵 TIM BIRU</span>
+        <span class="redText">TIM MERAH 🔴</span>
+      </div>
+
+      <div class="arena">
+        <div class="character blue">🏃</div>
+        <div class="character red">🏃</div>
+        <div class="rope" id="rope"></div>
+        <div class="flag" id="flag">🚩</div>
+        <div class="ground"></div>
+      </div>
+
+      <div id="status"></div>
+
+      <div class="questionBox">
+        <div id="question"></div>
+        <div class="answers" id="answers"></div>
+        <div id="message"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="result">
+    <h2 id="winner"></h2>
+    <p>Permainan selesai!</p>
+    <button class="resultBtn" onclick="location.reload()">🔄 MAIN LAGI</button>
+  </div>
+
+  <script>
+    /* =========================
+       GOOGLE SHEETS
+       ========================= */
+
+    const SHEET_ID = "1bjO7_rm4hc14hFFyk_-CY3BXTWKsoklt93DdNsaPP3s";
+    const SHEET_GID = "0";
+
+    /*
+       Data Sheet:
+       A = pertanyaan
+       B = benar
+       C = salah 1
+       D = salah 2
+       E = salah 3
+    */
+
+    let questions = [];
+    let currentQuestion = 0;
+    let ropePosition = 0;
+    let gameStarted = false;
+
+    const WIN_POSITION = 6;
+
+    const $ = id => document.getElementById(id);
+
+
+    /* =========================
+       ACAK JAWABAN
+       ========================= */
+
+    function shuffle(array) {
+      const arr = [...array];
+
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+
+      return arr;
+    }
+
+
+    /* =========================
+       AMBIL DATA GOOGLE SHEETS
+       ========================= */
+
+    async function loadQuestions() {
+
+      try {
+
+        const url =
+          `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${SHEET_GID}`;
+
+        const response = await fetch(url);
+
+        if (!response.ok) {
+          throw new Error(
+            "Google Sheets tidak bisa diakses."
+          );
+        }
+
+        const text = await response.text();
+
+        const start = text.indexOf("{");
+        const end = text.lastIndexOf("}");
+
+        if (start === -1 || end === -1) {
+          throw new Error(
+            "Format data Google Sheets tidak terbaca."
+          );
+        }
+
+        const data =
+          JSON.parse(text.substring(start, end + 1));
+
+        const rows =
+          data.table.rows || [];
+
+        questions = [];
+
+        rows.forEach(row => {
+
+          const cells = row.c || [];
+
+          function value(index) {
+
+            if (
+              !cells[index] ||
+              cells[index].v === null ||
+              cells[index].v === undefined
+            ) {
+              return "";
+            }
+
+            return String(cells[index].v).trim();
+          }
+
+          const question = value(0);
+          const correct = value(1);
+          const wrong1 = value(2);
+          const wrong2 = value(3);
+          const wrong3 = value(4);
+
+          /*
+            Baris hanya dimasukkan jika
+            A sampai E semuanya terisi.
+          */
+
+          if (
+            question &&
+            correct &&
+            wrong1 &&
+            wrong2 &&
+            wrong3
+          ) {
+
+            const answers = shuffle([
+
+              {
+                text: correct,
+                correct: true
+              },
+
+              {
+                text: wrong1,
+                correct: false
+              },
+
+              {
+                text: wrong2,
+                correct: false
+              },
+
+              {
+                text: wrong3,
+                correct: false
+              }
+
+            ]);
+
+            questions.push({
+              question: question,
+              answers: answers
+            });
+          }
+
+        });
+
+
+        if (questions.length === 0) {
+
+          throw new Error(
+            "Tidak ada soal yang ditemukan. Pastikan data soal berada mulai baris 2 dan kolom A-E terisi."
+          );
+
+        }
+
+
+        $("setup").style.display = "none";
+
+        $("gameArea").style.display = "block";
+
+        $("status").textContent =
+          `✅ ${questions.length} soal berhasil dimuat.`;
+
+        $("question").textContent =
+          "Soal sudah siap!";
+
+        $("message").textContent =
+          "Jawab pertanyaan untuk menarik tali.";
+
+        setTimeout(startGame, 700);
+
+
+      } catch (error) {
+
+        console.error(error);
+
+        $("loading").textContent =
+          "❌ Gagal mengambil soal.";
+
+        $("error").textContent =
+          error.message +
+          " Pastikan Google Sheets disetel ke 'Siapa saja yang memiliki link → Pelihat'.";
+
+      }
+
+    }
+
+
+    /* =========================
+       MULAI GAME
+       ========================= */
+
+    function startGame() {
+
+      if (!questions.length) return;
+
+      gameStarted = true;
+
+      currentQuestion = 0;
+
+      ropePosition = 0;
+
+      updateRope();
+
+      showQuestion();
+
+    }
+
+
+    /* =========================
+       TAMPILKAN SOAL
+       ========================= */
+
+    function showQuestion() {
+
+      const q =
+        questions[currentQuestion % questions.length];
+
+      $("question").textContent =
+        q.question;
+
+      $("answers").innerHTML = "";
+
+      $("message").textContent = "";
+
+      q.answers.forEach((answer, index) => {
+
+        const button =
+          document.createElement("button");
+
+        button.className = "answer";
+
+        button.textContent =
+          `${String.fromCharCode(65 + index)}. ${answer.text}`;
+
+        button.onclick =
+          () => checkAnswer(
+            index,
+            button
+          );
+
+        $("answers").appendChild(button);
+
+      });
+
+    }
+
+
+    /* =========================
+       CEK JAWABAN
+       ========================= */
+
+    function checkAnswer(index, button) {
+
+      if (!gameStarted) return;
+
+      const q =
+        questions[currentQuestion % questions.length];
+
+      const correctIndex =
+        q.answers.findIndex(
+          answer => answer.correct
+        );
+
+      const buttons =
+        document.querySelectorAll(".answer");
+
+      buttons.forEach(
+        b => b.disabled = true
+      );
+
+
+      if (index === correctIndex) {
+
+        button.classList.add("correct");
+
+        ropePosition--;
+
+        $("message").textContent =
+          "✅ BENAR! Tim Biru menarik!";
+
+      } else {
+
+        button.classList.add("wrong");
+
+        if (buttons[correctIndex]) {
+          buttons[correctIndex]
+            .classList.add("correct");
+        }
+
+        ropePosition++;
+
+        $("message").textContent =
+          "❌ SALAH! Tim Merah menarik!";
+
+      }
+
+
+      updateRope();
+
+
+      if (ropePosition <= -WIN_POSITION) {
+
+        setTimeout(
+          () => finishGame(
+            "🔵 TIM BIRU MENANG!"
+          ),
+          700
+        );
+
+        return;
+      }
+
+
+      if (ropePosition >= WIN_POSITION) {
+
+        setTimeout(
+          () => finishGame(
+            "🔴 TIM MERAH MENANG!"
+          ),
+          700
+        );
+
+        return;
+      }
+
+
+      currentQuestion++;
+
+      setTimeout(
+        showQuestion,
+        900
+      );
+
+    }
+
+
+    /* =========================
+       GERAKAN TALI
+       ========================= */
+
+    function updateRope() {
+
+      const movement =
+        ropePosition * 25;
+
+      $("rope").style.transform =
+        `translateX(${movement}px)`;
+
+      $("flag").style.left =
+        `calc(50% + ${movement}px)`;
+
+    }
+
+
+    /* =========================
+       SELESAI
+       ========================= */
+
+    function finishGame(text) {
+
+      gameStarted = false;
+
+      $("winner").textContent =
+        text;
+
+      $("result").style.display =
+        "flex";
+
+    }
+
+
+    /* =========================
+       JALANKAN
+       ========================= */
+
+    loadQuestions();
+
+  </script>
+</body>
+
+</html>
