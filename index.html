@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Game Tarik Tambang Quiz</title>
     <style>
         * {
@@ -12,9 +12,9 @@
 
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
-            background: #72c8ef;
-            color: #10233b
+            font-family: Arial, Helvetica, sans-serif;
+            background: #eef8ff;
+            color: #17202a
         }
 
         button,
@@ -22,149 +22,152 @@
             font: inherit
         }
 
-        .hide {
+        .hidden {
             display: none !important
         }
 
-        body:before {
-            content: "";
-            position: fixed;
-            inset: 0;
-            z-index: -2;
-            background: linear-gradient(#55b9ef 0 48%, #82c95d 48% 100%)
-        }
-
-        body:after {
-            content: "";
-            position: fixed;
-            inset: 0;
-            z-index: -1;
-            opacity: .12;
-            background-image: radial-gradient(#fff 1px, transparent 1px);
-            background-size: 18px 18px
-        }
-
-        .wrap {
-            max-width: 1450px;
-            margin: auto;
-            padding: 18px
-        }
-
-        .top {
+        #setup {
+            min-height: 100vh;
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 15px
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: linear-gradient(#78d0ff, #dff6ff 58%, #77c957 58%)
         }
 
-        .help,
-        .score {
-            background: #073766;
-            color: #fff;
-            padding: 12px 22px;
-            border-radius: 16px;
-            font-weight: 900;
-            box-shadow: 0 5px 0 #05284a
-        }
-
-        .help {
-            cursor: pointer
-        }
-
-        .score {
-            font-size: 20px
-        }
-
-        .title {
-            text-align: center;
-            font-weight: 1000;
-            line-height: .85;
-            font-size: clamp(35px, 5vw, 70px);
-            text-shadow: 4px 5px #08335b;
-            margin: 5px 0 0;
-            color: #fff
-        }
-
-        .title span {
-            display: block;
-            color: #ffd21b;
-            -webkit-text-stroke: 2px #172c3d
-        }
-
-        .ribbon {
-            display: inline-block;
-            background: #df2d1f;
-            color: #fff;
-            font-size: clamp(20px, 3vw, 38px);
-            padding: 8px 70px;
-            border-radius: 10px;
-            margin-top: 5px;
-            box-shadow: 0 6px #7b160f
-        }
-
-        .setup {
-            position: absolute;
-            left: 20px;
-            top: 82px;
+        .setupBox {
+            width: min(560px, 100%);
             background: #fff;
-            border: 3px solid #174b78;
-            border-radius: 18px;
-            padding: 15px;
-            width: min(500px, calc(100% - 40px));
-            box-shadow: 0 8px 18px #0003;
-            z-index: 10
-        }
-
-        .setup h2 {
-            margin: 0 0 8px;
+            border-radius: 22px;
+            padding: 25px;
+            box-shadow: 0 12px 35px #0004;
             text-align: center
         }
 
-        .setup input {
+        .setupBox h1 {
+            margin: 0 0 8px;
+            font-size: 30px
+        }
+
+        .setupBox input {
             width: 100%;
-            padding: 13px;
-            border: 2px solid #aaa;
-            border-radius: 10px
+            padding: 15px;
+            border: 2px solid #c9c9c9;
+            border-radius: 12px;
+            margin: 12px 0
         }
 
         .start {
             width: 100%;
-            margin-top: 9px;
-            padding: 13px;
+            padding: 14px;
             border: 0;
-            border-radius: 10px;
-            background: #24a33a;
+            border-radius: 12px;
+            background: #25a843;
             color: #fff;
             font-weight: 900;
             cursor: pointer
         }
 
-        .err {
-            color: #c21d1d;
+        #error {
+            color: #d22;
             font-weight: bold;
-            margin-top: 8px
+            margin-top: 9px
         }
 
-        .tip {
-            font-size: 12px;
-            color: #555;
-            margin-top: 8px
+        .hint {
+            font-size: 13px;
+            color: #666;
+            margin-top: 12px;
+            text-align: left;
+            line-height: 1.5
         }
 
-        .arena {
+        #app {
+            min-height: 100vh;
+            background: linear-gradient(#67c8f6 0 48%, #7bc958 48%);
+            overflow: hidden
+        }
+
+        .page {
+            max-width: 1450px;
+            margin: auto;
+            padding: 12px 18px 25px
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center
+        }
+
+        .smallBtn,
+        .score {
+            background: #073968;
+            color: white;
+            border: 0;
+            border-radius: 13px;
+            padding: 11px 18px;
+            font-weight: 900;
+            box-shadow: 0 4px 0 #042643
+        }
+
+        .score {
+            font-size: 18px
+        }
+
+        .logo {
+            text-align: center;
+            margin-top: -4px;
+            position: relative;
+            z-index: 2
+        }
+
+        .logo .game {
+            font-size: clamp(35px, 5vw, 64px);
+            font-weight: 1000;
+            color: #fff;
+            text-shadow: 4px 4px #14365a
+        }
+
+        .logo .title {
+            font-size: clamp(42px, 6vw, 78px);
+            font-weight: 1000;
+            color: #ffd21b;
+            -webkit-text-stroke: 2px #18334e;
+            text-shadow: 4px 5px #18334e
+        }
+
+        .logo .quiz {
+            display: inline-block;
+            background: #df3025;
+            color: #fff;
+            padding: 6px 75px;
+            border-radius: 8px;
+            font-size: 30px;
+            font-weight: 1000;
+            box-shadow: 0 5px #8c1a13;
+            margin-top: -8px
+        }
+
+        .scene {
             height: 400px;
             position: relative;
-            margin-top: 12px;
-            overflow: hidden
+            margin-top: -3px
+        }
+
+        .skyline {
+            position: absolute;
+            inset: 0 0 80px;
+            background: linear-gradient(#69c9f6, #dff7ff)
         }
 
         .cloud {
             position: absolute;
+            width: 110px;
+            height: 30px;
             background: #fff;
-            width: 120px;
-            height: 35px;
-            border-radius: 40px;
-            opacity: .8
+            border-radius: 30px;
+            opacity: .85
         }
 
         .cloud:before,
@@ -176,177 +179,206 @@
         }
 
         .cloud:before {
-            width: 55px;
-            height: 55px;
+            width: 50px;
+            height: 50px;
             left: 15px;
-            top: -25px
+            top: -23px
         }
 
         .cloud:after {
-            width: 65px;
-            height: 65px;
+            width: 55px;
+            height: 55px;
             right: 12px;
-            top: -32px
+            top: -29px
         }
 
         .c1 {
-            left: 8%;
-            top: 40px
+            left: 9%;
+            top: 45px
         }
 
         .c2 {
-            right: 8%;
-            top: 80px
+            right: 9%;
+            top: 75px
         }
 
-        .ground {
+        .field {
             position: absolute;
-            bottom: 0;
             left: 0;
             right: 0;
+            bottom: 0;
             height: 105px;
-            background: linear-gradient(#7acb52, #4a9f3e);
-            border-radius: 45% 45% 0 0/20% 20% 0 0
+            background: linear-gradient(#76ca54, #4e9e3f);
+            border-radius: 50% 50% 0 0/30% 30% 0 0
         }
 
-        .tug {
+        .centerline {
             position: absolute;
-            left: 4%;
-            right: 4%;
-            top: 115px;
-            height: 250px
+            top: 125px;
+            bottom: 40px;
+            left: 50%;
+            border-left: 3px dashed #fff9
+        }
+
+        .tugArea {
+            position: absolute;
+            left: 3%;
+            right: 3%;
+            top: 100px;
+            height: 270px
         }
 
         .team {
             position: absolute;
             top: 0;
-            width: 46%;
-            height: 250px;
+            width: 45%;
+            height: 270px;
             display: flex;
-            justify-content: space-between;
-            align-items: flex-end
+            align-items: flex-end;
+            gap: 0
         }
 
-        .blueTeam {
+        .leftTeam {
             left: 0
         }
 
-        .redTeam {
+        .rightTeam {
             right: 0;
             flex-direction: row-reverse
         }
 
         .person {
-            width: 31%;
+            width: 50%;
+            max-width: 245px;
             min-width: 125px;
             position: relative;
-            transition: transform .55s cubic-bezier(.2, .8, .2, 1);
-            filter: drop-shadow(0 5px 2px #0003)
+            z-index: 3;
+            transition: transform .55s cubic-bezier(.18, .82, .22, 1);
+            transform-origin: 50% 90%
         }
 
         .person svg {
             width: 100%;
             height: auto;
-            display: block
-        }
-
-        .person .shirtB {
-            fill: #176ce0
-        }
-
-        .person .shirtR {
-            fill: #e3342f
-        }
-
-        .skin {
-            fill: #f3b18b
-        }
-
-        .hair {
-            fill: #151515
-        }
-
-        .pants {
-            fill: #222
-        }
-
-        .shoe {
-            fill: #17202b;
-            stroke: #111;
-            stroke-width: 3
+            display: block;
+            overflow: visible
         }
 
         .edge {
-            stroke: #18202a;
+            stroke: #202020;
             stroke-width: 3;
             stroke-linecap: round;
             stroke-linejoin: round
         }
 
-        .happy .mouth {
-            d: path("M0 2 Q10 13 20 2")
+        .skin {
+            fill: #f1b08a
         }
 
-        .angry .mouth {
-            d: path("M0 10 Q10 0 20 10")
+        .hair {
+            fill: #171717
         }
 
-        .happy .b1 {
-            transform: rotate(-10deg)
+        .shorts {
+            fill: #292929
         }
 
-        .happy .b2 {
-            transform: rotate(10deg)
+        .shoe {
+            fill: #1d252c
         }
 
-        .angry .b1 {
-            transform: rotate(25deg)
+        .blueShirt {
+            fill: #1672df
         }
 
-        .angry .b2 {
-            transform: rotate(-25deg)
+        .redShirt {
+            fill: #df3030
         }
 
-        .rope {
+        .face .eye {
+            fill: #151515
+        }
+
+        .face .mouth {
+            fill: none;
+            stroke: #7e2828;
+            stroke-width: 4;
+            stroke-linecap: round
+        }
+
+        .person.happy .mouth {
+            d: path("M0 0 Q12 13 24 0")
+        }
+
+        .person.angry .mouth {
+            d: path("M0 10 Q12 0 24 10")
+        }
+
+        .person.happy .browL {
+            transform: rotate(-12deg)
+        }
+
+        .person.happy .browR {
+            transform: rotate(12deg)
+        }
+
+        .person.angry .browL {
+            transform: rotate(24deg)
+        }
+
+        .person.angry .browR {
+            transform: rotate(-24deg)
+        }
+
+        .ropeBox {
             position: absolute;
-            left: 9%;
-            right: 9%;
-            top: 135px;
+            z-index: 6;
+            left: 7%;
+            right: 7%;
+            top: 128px;
             height: 85px;
-            z-index: 5;
-            pointer-events: none
+            pointer-events: none;
+            transition: transform .55s
         }
 
-        .rope svg {
+        .ropeBox svg {
             width: 100%;
             height: 100%;
             overflow: visible
         }
 
-        .ropeMain {
+        .ropeShadow {
             fill: none;
-            stroke: #76471e;
-            stroke-width: 12;
+            stroke: #0003;
+            stroke-width: 16;
+            stroke-linecap: round
+        }
+
+        .rope {
+            fill: none;
+            stroke: #76502d;
+            stroke-width: 10;
             stroke-linecap: round
         }
 
         .ropeLight {
             fill: none;
-            stroke: #b97b43;
+            stroke: #c18a4d;
             stroke-width: 3;
-            stroke-dasharray: 10 8
+            stroke-dasharray: 9 8;
+            stroke-linecap: round
         }
 
         .flag {
             position: absolute;
+            z-index: 9;
             left: 50%;
-            top: 118px;
-            width: 28px;
-            height: 52px;
-            background: #ffd21a;
+            top: 126px;
+            width: 26px;
+            height: 48px;
+            background: #ffd31b;
             border: 3px solid #9d7800;
             border-radius: 4px;
-            z-index: 8;
             transform: translateX(-50%);
             transition: transform .55s
         }
@@ -354,79 +386,65 @@
         .flag:after {
             content: "";
             position: absolute;
-            left: 10px;
-            top: 47px;
+            left: 9px;
+            top: 44px;
             height: 45px;
-            border-left: 4px solid #6e4a22
+            border-left: 4px solid #6d4a27
         }
 
-        .dust {
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #d9c89d;
-            opacity: 0;
-            z-index: 3
+        .pullBlue {
+            animation: pullBlue .62s
         }
 
-        .dust.show {
-            animation: dust .65s ease-out
+        .pullRed {
+            animation: pullRed .62s
         }
 
-        @keyframes dust {
-            0% {
-                opacity: .8;
-                transform: translate(0, 0) scale(.5)
-            }
-
-            100% {
-                opacity: 0;
-                transform: translate(0, -35px) scale(2)
-            }
-        }
-
-        .pullB {
-            animation: pullB .6s
-        }
-
-        .pullR {
-            animation: pullR .6s
-        }
-
-        .lose {
-            animation: lose .6s
-        }
-
-        .hands {
-            animation: hands .3s 2 alternate
+        .beingPulled {
+            animation: beingPulled .62s
         }
 
         .ropeTug {
-            animation: ropeTug .6s
+            animation: ropeTug .62s
         }
 
-        @keyframes pullB {
+        .handTug {
+            animation: handTug .3s ease-in-out 2 alternate
+        }
+
+        @keyframes pullBlue {
+
+            0%,
+            100% {
+                transform: translate(0, 0)
+            }
+
             35% {
-                transform: translate(-18px, 8px) rotate(-3deg)
+                transform: translate(-18px, 10px) rotate(-4deg)
             }
 
             65% {
-                transform: translate(5px, -2px)
+                transform: translate(6px, -2px) rotate(1deg)
             }
         }
 
-        @keyframes pullR {
+        @keyframes pullRed {
+
+            0%,
+            100% {
+                transform: translate(0, 0)
+            }
+
             35% {
-                transform: translate(18px, 8px) rotate(3deg)
+                transform: translate(18px, 10px) rotate(4deg)
             }
 
             65% {
-                transform: translate(-5px, -2px)
+                transform: translate(-6px, -2px) rotate(-1deg)
             }
         }
 
-        @keyframes lose {
+        @keyframes beingPulled {
             35% {
                 transform: translate(0, 7px) rotate(2deg)
             }
@@ -436,19 +454,45 @@
             }
         }
 
-        @keyframes hands {
+        @keyframes ropeTug {
+            35% {
+                transform: scaleY(1.1)
+            }
+
+            65% {
+                transform: scaleY(.97)
+            }
+        }
+
+        @keyframes handTug {
             to {
                 transform: translate(8px, 3px)
             }
         }
 
-        @keyframes ropeTug {
-            35% {
-                transform: scaleY(1.08)
+        .dust {
+            position: absolute;
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            background: #d8c59b;
+            opacity: 0;
+            z-index: 2
+        }
+
+        .dust.show {
+            animation: dust .6s ease-out
+        }
+
+        @keyframes dust {
+            0% {
+                opacity: .85;
+                transform: translate(0, 0) scale(.5)
             }
 
-            65% {
-                transform: scaleY(.96)
+            100% {
+                opacity: 0;
+                transform: translate(0, -35px) scale(2)
             }
         }
 
@@ -460,74 +504,74 @@
 
         .panel {
             background: #fff;
-            border-radius: 18px;
-            padding: 0 14px 14px;
-            box-shadow: 0 8px 18px #0003;
-            overflow: hidden
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 7px 18px #0003
         }
 
-        .panel h2 {
-            margin: 0 -14px 12px;
-            padding: 15px;
+        .panelTitle {
+            padding: 14px;
             text-align: center;
             color: #fff;
-            font-size: 25px
+            font-size: 24px;
+            font-weight: 1000
         }
 
-        .blueH {
-            background: #0864dc
+        .blueTitle {
+            background: #075ed2
         }
 
-        .redH {
-            background: #d92323
+        .redTitle {
+            background: #d92121
         }
 
-        .q {
+        .question {
+            padding: 15px;
             text-align: center;
             font-weight: 900;
-            font-size: 19px;
-            min-height: 55px;
-            padding: 5px
+            min-height: 62px;
+            font-size: 18px
         }
 
         .answers {
+            padding: 10px;
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 9px
+            gap: 9px;
+            background: #f6f6f6
         }
 
-        .ans {
-            border: 2px solid #d6d6d6;
+        .answer {
+            border: 1px solid #ccc;
             background: #fff;
-            border-radius: 10px;
-            padding: 12px;
+            border-radius: 6px;
+            padding: 13px;
             text-align: left;
             cursor: pointer;
-            min-height: 52px;
+            min-height: 48px;
             font-weight: 700
         }
 
-        .ans:hover {
+        .answer:hover {
             background: #eef5ff
         }
 
-        .correct {
-            background: #36a852 !important;
-            color: white;
-            border-color: #22813a
+        .answer.correct {
+            background: #36a852;
+            color: white
         }
 
-        .wrong {
-            background: #e43b3b !important;
-            color: #fff;
-            border-color: #a31c1c
+        .answer.wrong {
+            background: #e33b3b;
+            color: white
         }
 
         .status {
             text-align: center;
+            font-weight: 1000;
             font-size: 18px;
-            font-weight: 900;
-            padding: 14px
+            padding: 13px;
+            min-height: 25px
         }
 
         .bottom {
@@ -538,56 +582,46 @@
 
         .bottom button {
             border: 0;
-            border-radius: 12px;
-            background: #073766;
-            color: #fff;
-            padding: 11px 18px;
+            background: #073968;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 10px;
             font-weight: 900
         }
 
         @media(max-width:800px) {
-            .setup {
-                position: relative;
-                left: auto;
-                top: auto;
-                margin: 8px auto
+            .page {
+                padding: 9px
             }
 
-            .top {
-                align-items: center
+            .logo .quiz {
+                padding: 5px 40px;
+                font-size: 22px
             }
 
-            .score {
-                font-size: 15px;
-                padding: 10px
+            .scene {
+                height: 300px
             }
 
-            .help {
-                padding: 10px
+            .tugArea {
+                top: 75px;
+                height: 210px
             }
 
-            .arena {
-                height: 285px
-            }
-
-            .tug {
-                top: 85px
-            }
-
-            .rope {
-                top: 102px
+            .ropeBox {
+                top: 98px
             }
 
             .flag {
-                top: 87px
+                top: 96px
             }
 
             .team {
-                height: 190px
+                height: 210px
             }
 
             .person {
-                min-width: 85px
+                min-width: 88px
             }
 
             .questions {
@@ -597,40 +631,55 @@
             .answers {
                 grid-template-columns: 1fr 1fr
             }
-
-            .title {
-                font-size: 38px
-            }
-
-            .ribbon {
-                padding: 6px 35px;
-                font-size: 22px
-            }
         }
 
-        @media(max-width:480px) {
-            .arena {
-                height: 245px
+        @media(max-width:500px) {
+            .topbar .smallBtn {
+                font-size: 12px;
+                padding: 9px
             }
 
-            .team {
-                height: 155px
+            .score {
+                font-size: 13px;
+                padding: 9px
             }
 
-            .tug {
-                top: 70px
+            .logo .game {
+                font-size: 31px
             }
 
-            .rope {
-                top: 80px
+            .logo .title {
+                font-size: 40px
+            }
+
+            .logo .quiz {
+                font-size: 18px;
+                padding: 4px 28px
+            }
+
+            .scene {
+                height: 255px
+            }
+
+            .tugArea {
+                top: 67px;
+                height: 175px
+            }
+
+            .ropeBox {
+                top: 83px
             }
 
             .flag {
-                top: 65px
+                top: 82px
+            }
+
+            .team {
+                height: 175px
             }
 
             .person {
-                min-width: 68px
+                min-width: 67px
             }
 
             .questions {
@@ -641,7 +690,7 @@
                 grid-template-columns: 1fr
             }
 
-            .panel h2 {
+            .panelTitle {
                 font-size: 20px
             }
         }
@@ -649,100 +698,176 @@
 </head>
 
 <body>
-    <div class="wrap">
-        <div class="top"><button class="help"
-                onclick="alert('Masukkan link Google Sheets. Kolom A=Pertanyaan, B=Jawaban Benar, C-E=Jawaban Salah. Setel akses Sheet menjadi Siapa saja yang memiliki link → Pelihat.')">❔
-                PETUNJUK</button>
-            <div class="score">🏆 Skor <span id="score">0 : 0</span></div>
-        </div>
-        <div class="title">GAME <span>TARIK TAMBANG</span>
-            <div class="ribbon">QUIZ</div>
-        </div>
 
-        <div id="setup" class="setup">
-            <h2>Masukkan Link Google Sheet</h2>
-            <input id="url" placeholder="https://docs.google.com/spreadsheets/d/...">
-            <button class="start" onclick="connect()">▣ MULAI GAME</button>
-            <div id="err" class="err"></div>
-            <div class="tip">A = Pertanyaan • B = Jawaban Benar • C = Salah 1 • D = Salah 2 • E = Salah 3<br>Pastikan
-                akses Google Sheet: <b>Siapa saja yang memiliki link → Pelihat</b>.</div>
+    <section id="setup">
+        <div class="setupBox">
+            <div style="font-size:55px">🪢</div>
+            <h1>GAME TARIK TAMBANG QUIZ</h1>
+            <p>Masukkan link Google Sheets untuk mengambil soal.</p>
+            <input id="sheetUrl" placeholder="Tempel link Google Sheets di sini">
+            <button class="start" onclick="connectSheet()">▣ MULAI GAME</button>
+            <div id="error"></div>
+            <div class="hint"><b>Format Google Sheet:</b><br>A = Pertanyaan<br>B = Jawaban Benar<br>C = Jawaban Salah
+                1<br>D = Jawaban Salah 2<br>E = Jawaban Salah 3<br><br>Setel akses menjadi <b>Siapa saja yang memiliki
+                    link → Pelihat</b>.</div>
         </div>
+    </section>
 
-        <div id="game" class="hide">
-            <div class="arena">
+    <section id="app" class="hidden">
+        <div class="page">
+            <div class="topbar">
+                <button class="smallBtn"
+                    onclick="alert('Jawab soal dengan benar untuk menarik tali ke tim Biru. Jawaban salah membuat Tim Merah menarik.')">❔
+                    PETUNJUK</button>
+                <div class="score">🏆 Skor <span id="score">0 : 0</span></div>
+            </div>
+
+            <div class="logo">
+                <div class="game">GAME</div>
+                <div class="title">TARIK TAMBANG</div>
+                <div class="quiz">QUIZ</div>
+            </div>
+
+            <div class="scene">
+                <div class="skyline"></div>
                 <div class="cloud c1"></div>
                 <div class="cloud c2"></div>
-                <div class="ground"></div>
-                <div class="tug">
-                    <div class="team blueTeam" id="blueTeam"></div>
-                    <div class="team redTeam" id="redTeam"></div>
+                <div class="field"></div>
+                <div class="centerline"></div>
+                <div class="tugArea">
+                    <div id="leftTeam" class="team leftTeam"></div>
+                    <div id="rightTeam" class="team rightTeam"></div>
                 </div>
-                <div class="rope" id="ropeBox"><svg viewBox="0 0 1000 100" preserveAspectRatio="none">
-                        <path id="ropeShadow" class="ropeMain" d="M0 50 C250 50 750 50 1000 50" />
-                        <path id="rope" class="ropeMain" d="M0 50 C250 50 750 50 1000 50" />
+                <div id="ropeBox" class="ropeBox">
+                    <svg viewBox="0 0 1000 100" preserveAspectRatio="none">
+                        <path id="ropeShadow" class="ropeShadow" d="M0 50 C250 50 750 50 1000 50" />
+                        <path id="rope" class="rope" d="M0 50 C250 50 750 50 1000 50" />
                         <path id="ropeLight" class="ropeLight" d="M0 47 C250 47 750 47 1000 47" />
-                    </svg></div>
+                    </svg>
+                </div>
                 <div id="flag" class="flag"></div>
-                <div class="dust" style="left:15%;bottom:55px"></div>
-                <div class="dust" style="left:24%;bottom:60px"></div>
-                <div class="dust" style="right:15%;bottom:55px"></div>
-                <div class="dust" style="right:24%;bottom:60px"></div>
+                <div class="dust" style="left:13%;bottom:55px"></div>
+                <div class="dust" style="left:25%;bottom:65px"></div>
+                <div class="dust" style="right:13%;bottom:55px"></div>
+                <div class="dust" style="right:25%;bottom:65px"></div>
             </div>
 
             <div class="questions">
                 <div class="panel">
-                    <h2 class="blueH">TIM BIRU</h2>
-                    <div id="qB" class="q"></div>
-                    <div id="aB" class="answers"></div>
+                    <div class="panelTitle blueTitle">TIM BIRU</div>
+                    <div id="qBlue" class="question"></div>
+                    <div id="aBlue" class="answers"></div>
                 </div>
                 <div class="panel">
-                    <h2 class="redH">TIM MERAH</h2>
-                    <div id="qR" class="q"></div>
-                    <div id="aR" class="answers"></div>
+                    <div class="panelTitle redTitle">TIM MERAH</div>
+                    <div id="qRed" class="question"></div>
+                    <div id="aRed" class="answers"></div>
                 </div>
             </div>
+
             <div id="status" class="status">Jawab soal untuk menarik tali!</div>
-            <div class="bottom"><button onclick="location.reload()">🔄 Reset</button><button onclick="toggleSound()">🔊
-                    Suara: <span id="snd">ON</span></button></div>
+            <div class="bottom"><button onclick="location.reload()">🔄 Reset</button><button
+                    onclick="location.reload()">🔗 Ganti Link</button></div>
         </div>
-    </div>
+    </section>
 
     <script>
-        let data = [], n = 0, position = 0, blueScore = 0, redScore = 0, locked = false, sound = true;
-        const shuffle = a => {a = [...a]; for (let i = a.length - 1; i; i--) {let j = Math.floor(Math.random() * (i + 1));[a[i], a[j]] = [a[j], a[i]]} return a};
-        function getId(u) {let m = u.match(/\/spreadsheets\/d\/([A-Za-z0-9_-]+)/); if (!m) throw Error("Link Google Sheets tidak valid."); let g = (u.match(/[?#&]gid=(\d+)/) || [])[1] || "0"; return [m[1], g]}
-        async function connect() {
-            try {
-                let [id, gid] = getId(document.getElementById('url').value.trim());
-                let r = await fetch(`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:json&gid=${gid}`);
-                if (!r.ok) throw Error("Google Sheet tidak bisa diakses.");
-                let t = await r.text(), j = JSON.parse(t.slice(t.indexOf('{'), t.lastIndexOf('}') + 1)); data = [];
-                (j.table.rows || []).forEach(x => {let v = x.c || []; let a = i => v[i]?.v == null ? "" : String(v[i].v).trim(); if (a(0) && a(1) && a(2) && a(3) && a(4)) data.push({q: a(0), ans: shuffle([{t: a(1), ok: true}, {t: a(2)}, {t: a(3)}, {t: a(4)}])})});
-                if (!data.length) throw Error("Tidak ada soal pada kolom A-E.");
-                document.getElementById('setup').classList.add('hide'); document.getElementById('game').classList.remove('hide'); makePeople(); show();
-            } catch (e) {document.getElementById('err').textContent = "❌ " + e.message + " Cek akses Sheet."}
+        let questions = [], index = 0, position = 0, blueScore = 0, redScore = 0, locked = false;
+        const shuffle = a => {a = [...a]; for (let i = a.length - 1; i > 0; i--) {let j = Math.floor(Math.random() * (i + 1));[a[i], a[j]] = [a[j], a[i]]} return a};
+        function getSheetId(url) {
+            const m = url.match(/\/spreadsheets\/d\/([A-Za-z0-9_-]+)/);
+            if (!m) throw new Error("Link Google Sheets tidak valid.");
+            const gid = (url.match(/[?#&]gid=(\d+)/) || [])[1] || "0";
+            return [m[1], gid];
         }
-        function person(color, i) {
-            return `<div class="person" id="${color}${i}"><svg viewBox="0 0 180 220">
-<ellipse class="shoe" cx="62" cy="204" rx="27" ry="9"/><ellipse class="shoe" cx="119" cy="202" rx="27" ry="9"/>
-<path class="skin edge" d="M50 145 L61 196 L77 196 L75 143Z"/><path class="skin edge" d="M103 143 L116 194 L133 194 L126 140Z"/>
-<path class="${color === 'blue' ? 'shirtB' : 'shirtR'} edge" d="M46 83 Q88 62 130 86 L137 145 Q90 164 42 143Z"/>
-<path class="skin edge" d="M55 92 Q30 106 21 126 L31 134 Q49 120 66 114Z"/>
-<circle class="skin edge" cx="28" cy="129" r="9"/>
-<path class="skin edge" d="M120 94 Q148 106 159 126 L149 134 Q130 119 113 114Z"/>
-<circle class="skin edge" cx="158" cy="130" r="9"/>
-<circle class="skin edge" cx="88" cy="54" r="35"/>
-<path class="hair edge" d="M53 55 Q49 17 85 15 Q122 12 124 50 Q109 32 90 34 Q68 37 53 55Z"/>
-<g class="face"><path class="b1 edge" d="M69 51 L79 49"/><path class="b2 edge" d="M98 49 L108 51"/><circle cx="75" cy="60" r="3.5"/><circle cx="102" cy="60" r="3.5"/><path class="mouth edge" d="M79 76 Q88 83 98 76"/></g>
-</svg></div>`}
-        function makePeople() {document.getElementById('blueTeam').innerHTML = [0, 1, 2].map(i => person('blue', i)).join(''); document.getElementById('redTeam').innerHTML = [0, 1, 2].map(i => person('red', i)).join('')}
-        function face(side, win) {for (let c of ['blue', 'red']) for (let i = 0; i < 3; i++) {let x = document.getElementById(c + i); x.classList.remove('happy', 'angry'); if (c === side) x.classList.add(win ? 'happy' : 'angry')} }
-        function show() {locked = false; let q = data[n % data.length]; document.getElementById('qB').textContent = q.q; document.getElementById('qR').textContent = q.q; makeAns('aB', q); makeAns('aR', q); document.getElementById('status').textContent = `Soal ${n + 1} • Pilih jawaban`; move()}
-        function makeAns(id, q) {let b = document.getElementById(id); b.innerHTML = ''; q.ans.forEach(a => {let x = document.createElement('button'); x.className = 'ans'; x.textContent = a.t; x.onclick = () => answer(a, x, b); b.appendChild(x)})}
-        function answer(a, btn, box) {if (locked) return; locked = true; box.querySelectorAll('button').forEach(x => x.disabled = true); let p = 1 + Math.floor(Math.random() * 3), side = a.ok ? 'blue' : 'red'; if (a.ok) {blueScore++; btn.classList.add('correct')} else {redScore++; btn.classList.add('wrong')} position += (side === 'blue' ? -p : p); face(side, true); for (let c of ['blue', 'red']) {for (let i = 0; i < 3; i++) {let x = document.getElementById(c + i); x.classList.add(c === side ? (c === 'blue' ? 'pullB' : 'pullR') : 'lose');} } document.querySelectorAll('.dust').forEach(x => {x.classList.remove('show'); void x.offsetWidth; x.classList.add('show')}); document.getElementById('ropeBox').classList.add('ropeTug'); bend(side, p); move(); document.getElementById('score').textContent = `${blueScore} : ${redScore}`; document.getElementById('status').textContent = a.ok ? `✅ BENAR! Tim Biru menarik ${p === 1 ? 'sedikit' : p === 2 ? 'sedang' : 'kuat'}!` : `❌ SALAH! Tim Merah menarik ${p === 1 ? 'sedikit' : p === 2 ? 'sedang' : 'kuat'}!`; if (Math.abs(position) >= 8) {setTimeout(() => {alert(side === 'blue' ? '🏆 TIM BIRU MENANG!' : '🏆 TIM MERAH MENANG!'); location.reload()}, 900)} else {n++; setTimeout(() => {document.querySelectorAll('.person').forEach(x => x.className = 'person'); document.getElementById('ropeBox').classList.remove('ropeTug'); show()}, 1000)} }
-        function bend(side, p) {let a = (side === 'blue' ? -1 : 1) * (8 + p * 8); let d = `M0 50 C250 ${50 + a} 500 ${50 - a} 750 ${50 + a / 2} C850 ${50 + a / 3} 930 50 1000 50`; for (let id of ['rope', 'ropeShadow', 'ropeLight']) document.getElementById(id).setAttribute('d', d); setTimeout(() => {for (let id of ['rope', 'ropeShadow', 'ropeLight']) document.getElementById(id).setAttribute('d', 'M0 50 C250 50 750 50 1000 50')}, 650)}
-        function move() {let x = position * 17; document.getElementById('ropeBox').style.transform = `translateX(${x}px)`; document.getElementById('flag').style.transform = `translateX(calc(-50% + ${x}px))`}
-        function toggleSound() {sound = !sound; document.getElementById('snd').textContent = sound ? 'ON' : 'OFF'}
+        async function connectSheet() {
+            const err = document.getElementById("error"); err.textContent = "";
+            try {
+                const [id, gid] = getSheetId(document.getElementById("sheetUrl").value.trim());
+                const res = await fetch(`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:json&gid=${gid}`);
+                if (!res.ok) throw new Error("Google Sheets tidak bisa diakses.");
+                const text = await res.text();
+                const json = JSON.parse(text.slice(text.indexOf("{"), text.lastIndexOf("}") + 1));
+                questions = [];
+                (json.table.rows || []).forEach(row => {
+                    const c = row.c || []; const v = i => c[i]?.v == null ? "" : String(c[i].v).trim();
+                    if (v(0) && v(1) && v(2) && v(3) && v(4)) questions.push({q: v(0), answers: shuffle([{t: v(1), correct: true}, {t: v(2)}, {t: v(3)}, {t: v(4)}])});
+                });
+                if (!questions.length) throw new Error("Soal tidak ditemukan pada kolom A-E.");
+                document.getElementById("setup").classList.add("hidden");
+                document.getElementById("app").classList.remove("hidden");
+                createPeople(); showQuestion();
+            } catch (e) {err.textContent = "❌ " + e.message + " Pastikan Sheet dapat dilihat publik."}
+        }
+        function createPeople() {
+            document.getElementById("leftTeam").innerHTML = makePerson("blue", 0) + makePerson("blue", 1);
+            document.getElementById("rightTeam").innerHTML = makePerson("red", 0) + makePerson("red", 1);
+        }
+        function makePerson(color, n) {
+            const shirt = color === "blue" ? "blueShirt" : "redShirt";
+            return `<div id="${color}${n}" class="person">
+ <svg viewBox="0 0 220 270">
+  <ellipse class="shoe edge" cx="75" cy="246" rx="34" ry="10"/><ellipse class="shoe edge" cx="150" cy="242" rx="34" ry="10"/>
+  <path class="skin edge" d="M68 183 L72 237 L92 237 L100 179Z"/><path class="skin edge" d="M125 180 L142 236 L162 236 L153 174Z"/>
+  <path class="${shirt} edge" d="M61 105 Q109 77 157 105 L164 181 Q111 199 55 177Z"/>
+  <path class="skin edge" d="M72 116 Q39 122 22 146 L31 157 Q55 143 81 137Z"/>
+  <circle class="skin edge hand" cx="28" cy="151" r="12"/>
+  <path class="skin edge" d="M145 118 Q177 126 198 149 L188 159 Q163 145 139 138Z"/>
+  <circle class="skin edge hand" cx="195" cy="153" r="12"/>
+  <circle class="skin edge" cx="111" cy="67" r="42"/>
+  <path class="hair edge" d="M69 68 Q65 21 108 18 Q153 14 158 59 Q140 39 119 42 Q91 45 69 68Z"/>
+  <g class="face"><path class="b1 edge" d="M91 63 L104 59"/><path class="b2 edge" d="M119 59 L133 63"/><circle class="eye" cx="97" cy="73" r="4"/><circle class="eye" cx="127" cy="73" r="4"/><path class="mouth" d="M101 91 Q112 100 124 91"/></g>
+ </svg></div>`;
+        }
+        function setFaces(side) {
+            document.querySelectorAll(".person").forEach(p => p.classList.remove("happy", "angry"));
+            document.querySelectorAll("#" + side + "0,#" + side + "1").forEach(p => p.classList.add("happy"));
+            const other = side === "blue" ? "red" : "blue";
+            document.querySelectorAll("#" + other + "0,#" + other + "1").forEach(p => p.classList.add("angry"));
+        }
+        function showQuestion() {
+            locked = false;
+            const q = questions[index % questions.length];
+            document.getElementById("qBlue").textContent = q.q;
+            document.getElementById("qRed").textContent = q.q;
+            renderAnswers("aBlue", q); renderAnswers("aRed", q);
+            document.getElementById("status").textContent = `Soal ${index + 1} • Pilih jawaban`;
+        }
+        function renderAnswers(id, q) {
+            const box = document.getElementById(id); box.innerHTML = "";
+            q.answers.forEach(a => {
+                const b = document.createElement("button"); b.className = "answer"; b.textContent = a.t;
+                b.onclick = () => answer(a, b, box); box.appendChild(b);
+            });
+        }
+        function answer(a, button, box) {
+            if (locked) return; locked = true;
+            box.querySelectorAll("button").forEach(b => b.disabled = true);
+            const power = 1 + Math.floor(Math.random() * 3);
+            const winner = a.correct ? "blue" : "red";
+            if (a.correct) {blueScore++; button.classList.add("correct")} else {redScore++; button.classList.add("wrong")}
+            position += winner === "blue" ? -power : power;
+            setFaces(winner); animate(winner, power); moveRope();
+            document.getElementById("score").textContent = `${blueScore} : ${redScore}`;
+            document.getElementById("status").textContent = a.correct ? `✅ BENAR! Tim Biru menarik ${power === 1 ? "sedikit" : power === 2 ? "sedang" : "kuat"}!` : `❌ SALAH! Tim Merah menarik ${power === 1 ? "sedikit" : power === 2 ? "sedang" : "kuat"}!`;
+            if (Math.abs(position) >= 9) {setTimeout(() => {alert(winner === "blue" ? "🏆 TIM BIRU MENANG!" : "🏆 TIM MERAH MENANG!"); location.reload()}, 850); return }
+            index++;
+            setTimeout(() => {resetAnim(); showQuestion()}, 1000);
+        }
+        function animate(side, power) {
+            const win = document.querySelectorAll("#" + side + "0,#" + side + "1");
+            const lose = side === "blue" ? "red" : "blue";
+            win.forEach(x => {x.classList.remove("pullBlue", "pullRed", "beingPulled"); void x.offsetWidth; x.classList.add(side === "blue" ? "pullBlue" : "pullRed")});
+            document.querySelectorAll("#" + lose + "0,#" + lose + "1").forEach(x => {x.classList.remove("beingPulled"); void x.offsetWidth; x.classList.add("beingPulled")});
+            document.getElementById("ropeBox").classList.remove("ropeTug"); void document.getElementById("ropeBox").offsetWidth; document.getElementById("ropeBox").classList.add("ropeTug");
+            document.querySelectorAll(".dust").forEach(x => {x.classList.remove("show"); void x.offsetWidth; x.classList.add("show")});
+            const amount = (side === "blue" ? -1 : 1) * (9 + power * 9);
+            const d = `M0 50 C250 ${50 + amount} 500 ${50 - amount * .5} 750 ${50 + amount * .35} C850 ${50 + amount * .2} 930 50 1000 50`;
+            ["rope", "ropeShadow", "ropeLight"].forEach(id => document.getElementById(id).setAttribute("d", d));
+            setTimeout(() => {const normal = "M0 50 C250 50 750 50 1000 50";["rope", "ropeShadow"].forEach(id => document.getElementById(id).setAttribute("d", normal)); document.getElementById("ropeLight").setAttribute("d", "M0 47 C250 47 750 47 1000 47")}, 650);
+        }
+        function moveRope() {const x = position * 15; document.getElementById("ropeBox").style.transform = `translateX(${x}px)`; document.getElementById("flag").style.transform = `translateX(calc(-50% + ${x}px))`}
+        function resetAnim() {document.querySelectorAll(".person").forEach(x => x.classList.remove("pullBlue", "pullRed", "beingPulled", "happy", "angry")); document.getElementById("ropeBox").classList.remove("ropeTug")}
     </script>
 </body>
 
