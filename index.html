@@ -193,17 +193,83 @@
       transform: translateX(-50%)
     }
 
-    .rope-line {
+    .rope-svg {
       position: absolute;
       left: 18%;
       right: 18%;
-      top: 156px;
-      height: 9px;
-      background: #a66a36;
-      border: 2px solid #704214;
-      border-radius: 10px;
-      box-shadow: 0 2px 3px #0003;
-      transition: .45s
+      top: 143px;
+      width: 64%;
+      height: 36px;
+      overflow: visible;
+      z-index: 3;
+      filter: drop-shadow(0 2px 1px #0004);
+    }
+
+    .rope-svg path {
+      fill: none;
+      stroke: #704214;
+      stroke-width: 16;
+      stroke-linecap: round;
+      transition: d .42s ease;
+    }
+
+    .rope-svg:after {
+      content: ""
+    }
+
+    .flag {
+      z-index: 6
+    }
+
+    .arm2 {
+      position: absolute;
+      width: 70px;
+      height: 13px;
+      background: #f4bb91;
+      border: 3px solid #252525;
+      border-radius: 12px;
+      top: 83px;
+      z-index: 5
+    }
+
+    .left .arm2 {
+      left: 101px;
+      transform: rotate(9deg)
+    }
+
+    .right .arm2 {
+      left: 2px;
+      transform: rotate(-9deg)
+    }
+
+    .hand2 {
+      position: absolute;
+      width: 19px;
+      height: 19px;
+      background: #f4bb91;
+      border: 3px solid #252525;
+      border-radius: 50%;
+      top: 80px;
+      z-index: 7
+    }
+
+    .left .hand2 {
+      left: 165px
+    }
+
+    .right .hand2 {
+      left: -4px
+    }
+
+    .hand,
+    .hand2 {
+      box-shadow: inset -2px -2px 0 #d79b78
+    }
+
+    .hand.grip,
+    .hand2.grip {
+      transform: scale(1.12);
+      box-shadow: inset -2px -2px 0 #c98565, 0 0 0 2px #704214
     }
 
     .flag {
@@ -518,7 +584,7 @@
         right: -1%
       }
 
-      .rope-line {
+      .rope-svg {
         left: 15%;
         right: 15%
       }
@@ -618,7 +684,7 @@
 
 
     /* ===== EFEK TARIK TAMBANG ===== */
-    .rope-line {
+    .rope-svg {
       transform-origin: center;
     }
 
@@ -638,11 +704,11 @@
       animation: shake .32s ease-in-out;
     }
 
-    .rope-line.pull-left {
+    .rope-svg.pull-left {
       animation: ropeLeft .42s ease-in-out;
     }
 
-    .rope-line.pull-right {
+    .rope-svg.pull-right {
       animation: ropeRight .42s ease-in-out;
     }
 
@@ -796,6 +862,101 @@
         transform: translate(0, -22px) scale(1.8)
       }
     }
+
+
+    .person .head {
+      transition: transform .25s ease
+    }
+
+    .person.happy .mouth {
+      height: 14px;
+      border-bottom: 5px solid #7b2929;
+      border-radius: 0 0 22px 22px;
+      top: 34px
+    }
+
+    .person.angry .mouth {
+      height: 9px;
+      border-top: 5px solid #7b2929;
+      border-bottom: 0;
+      border-radius: 22px 22px 0 0;
+      top: 38px
+    }
+
+    .person.happy .brow1 {
+      transform: rotate(-14deg)
+    }
+
+    .person.happy .brow2 {
+      transform: rotate(14deg)
+    }
+
+    .person.angry .brow1 {
+      transform: rotate(24deg)
+    }
+
+    .person.angry .brow2 {
+      transform: rotate(-24deg)
+    }
+
+    .person.tired .eye {
+      height: 4px;
+      top: 25px
+    }
+
+    .grip {
+      animation: grip .35s ease-in-out
+    }
+
+    @keyframes grip {
+
+      0%,
+      100% {
+        scale: 1
+      }
+
+      50% {
+        scale: 1.16
+      }
+    }
+
+    @keyframes ropeLeft {
+      0% {
+        filter: drop-shadow(0 2px 1px #0004);
+        transform: translateX(0) rotate(0)
+      }
+
+      35% {
+        transform: translateX(-8px) rotate(-1deg)
+      }
+
+      60% {
+        transform: translateX(3px) rotate(.7deg)
+      }
+
+      100% {
+        transform: translateX(0) rotate(0)
+      }
+    }
+
+    @keyframes ropeRight {
+      0% {
+        filter: drop-shadow(0 2px 1px #0004);
+        transform: translateX(0) rotate(0)
+      }
+
+      35% {
+        transform: translateX(8px) rotate(1deg)
+      }
+
+      60% {
+        transform: translateX(-3px) rotate(-.7deg)
+      }
+
+      100% {
+        transform: translateX(0) rotate(0)
+      }
+    }
   </style>
 </head>
 
@@ -837,7 +998,9 @@
       <div class="dust d3"></div>
       <div class="dust d4"></div>
       <div class="center-line"></div>
-      <div class="rope-line" id="rope"></div>
+      <svg class="rope-svg" id="rope" viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true">
+        <path id="ropePath" d="M0,50 C250,50 750,50 1000,50"></path>
+      </svg>
       <div class="flag" id="flag"></div>
 
       <div class="person left" id="bluePerson">
@@ -847,6 +1010,8 @@
         <div class="body"></div>
         <div class="arm"></div>
         <div class="hand"></div>
+        <div class="arm2"></div>
+        <div class="hand2"></div>
         <div class="leg leg1"></div>
         <div class="leg leg2"></div>
         <div class="shoe shoe1"></div>
@@ -859,6 +1024,8 @@
         <div class="body"></div>
         <div class="arm"></div>
         <div class="hand"></div>
+        <div class="arm2"></div>
+        <div class="hand2"></div>
         <div class="leg leg1"></div>
         <div class="leg leg2"></div>
         <div class="shoe shoe1"></div>
@@ -955,43 +1122,61 @@
         b.onclick = () => answer(a, b, box); box.appendChild(b);
       });
     }
-    function setFace(state) {
-      const people = document.querySelectorAll(".person");
-      people.forEach(p => {
-        p.classList.remove("happy", "angry", "tired");
-        if (state) p.classList.add(state);
-      });
+    function setFace(winner) {
+      const blue = document.getElementById("bluePerson");
+      const red = document.getElementById("redPerson");
+      [blue, red].forEach(p => p.classList.remove("happy", "angry", "tired"));
+      if (winner === "blue") {blue.classList.add("happy"); red.classList.add("angry");}
+      else if (winner === "red") {red.classList.add("happy"); blue.classList.add("angry");}
+      else {blue.classList.add("tired"); red.classList.add("tired");}
     }
     function answer(a, button, box) {
-      if (locked) return; locked = true;
+      if (locked) return;
+      locked = true;
       const q = questions[current % questions.length];
       box.querySelectorAll(".answer").forEach(b => b.disabled = true);
-      if (a.c) {button.classList.add("correct"); ropePos--; setFace("happy"); pullEffect("blue"); document.getElementById("status").textContent = "✅ BENAR! Tim Biru menarik tali!";}
-      else {
-        button.classList.add("wrong"); ropePos++; setFace("angry"); pullEffect("red"); document.getElementById("status").textContent = "❌ SALAH! Tim Merah menarik tali!";
-        [...box.querySelectorAll(".answer")].forEach((b, i) => {if (q.answers[i].c) b.classList.add("correct")});
+
+      // Tarikan tidak selalu sama besar: setiap soal memberi tenaga acak 1–3.
+      // Jadi ada soal yang hanya menggeser sedikit dan ada yang lebih kuat.
+      const pullPower = 1 + Math.floor(Math.random() * 3);
+
+      if (a.c) {
+        button.classList.add("correct");
+        ropePos -= pullPower;
+        setFace("blue");
+        pullEffect("blue", pullPower);
+        document.getElementById("status").textContent = `✅ BENAR! Tim Biru menarik ${pullPower} langkah!`;
+      } else {
+        button.classList.add("wrong");
+        ropePos += pullPower;
+        setFace("red");
+        pullEffect("red", pullPower);
+        document.getElementById("status").textContent = `❌ SALAH! Tim Merah menarik ${pullPower} langkah!`;
+        [...box.querySelectorAll(".answer")].forEach((b, i) => {
+          if (q.answers[i].c) b.classList.add("correct")
+        });
       }
+
       moveRope();
-      if (ropePos <= -WIN) return setTimeout(() => finish("🔵 TIM BIRU MENANG!"), 650);
-      if (ropePos >= WIN) return setTimeout(() => finish("🔴 TIM MERAH MENANG!"), 650);
-      current++; setTimeout(showQuestion, 750);
+      if (ropePos <= -WIN) return setTimeout(() => finish("🔵 TIM BIRU MENANG!"), 700);
+      if (ropePos >= WIN) return setTimeout(() => finish("🔴 TIM MERAH MENANG!"), 700);
+      current++;
+      setTimeout(showQuestion, 850);
     }
-    function pullEffect(direction) {
+    function pullEffect(direction, power) {
       const blue = document.getElementById("bluePerson");
       const red = document.getElementById("redPerson");
       const rope = document.getElementById("rope");
       const flag = document.getElementById("flag");
+      const grips = document.querySelectorAll(".hand,.hand2");
       const dust = document.querySelectorAll(".dust");
 
-      blue.classList.remove("pulling-left", "pulling-right", "shake");
-      red.classList.remove("pulling-left", "pulling-right", "shake");
+      [blue, red].forEach(p => p.classList.remove("pulling-left", "pulling-right", "shake"));
       rope.classList.remove("pull-left", "pull-right");
       flag.classList.remove("pulse");
+      grips.forEach(g => {g.classList.remove("grip"); void g.offsetWidth; g.classList.add("grip")});
       dust.forEach(d => d.classList.remove("show"));
-
-      void blue.offsetWidth;
-      void red.offsetWidth;
-      void rope.offsetWidth;
+      void blue.offsetWidth; void red.offsetWidth; void rope.offsetWidth;
 
       if (direction === "blue") {
         blue.classList.add("pulling-left");
@@ -1003,12 +1188,22 @@
         rope.classList.add("pull-right");
       }
 
+      // Hentakan makin kuat sesuai tenaga soal.
       flag.classList.add("pulse");
+      flag.style.setProperty("--power", power);
       dust.forEach(d => d.classList.add("show"));
+
+      const bend = direction === "blue" ? -(6 + power * 4) : (6 + power * 4);
+      const sway = direction === "blue" ? -power * 8 : power * 8;
+      const path = document.getElementById("ropePath");
+      path.setAttribute("d", `M0,50 C250,${50 + bend} 500,${50 - sway} 750,${50 + bend / 2} C850,${50 + bend / 3} 930,${50} 1000,50`);
+      setTimeout(() => {
+        path.setAttribute("d", "M0,50 C250,50 750,50 1000,50");
+      }, 500);
     }
 
     function moveRope() {
-      const x = ropePos * 28;
+      const x = ropePos * 10; // perpindahan visual dibuat halus
       document.getElementById("rope").style.transform = `translateX(${x}px)`;
       document.getElementById("flag").style.transform = `translateX(calc(-50% + ${x}px))`;
       document.getElementById("bluePerson").style.transform = `scaleX(-1) translateX(${Math.max(0, -ropePos) * 2}px)`;
